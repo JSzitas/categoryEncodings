@@ -161,22 +161,3 @@ encode_deviation <- function(X, fact){
 }
 
 
-
-
-
-
-# deviation 
-
-reference <- rep(-1, length(levels(design_mat[,6]))-1)
-
-dummies <- data.frame(rbind( diag(length(levels(design_mat[,6]))-1), reference))
-colnames(dummies) <- paste(levels(design_mat[,6])[1:length(levels(design_mat[,6]))-1],
-                           "_dummy" , sep = "")
-rownames(dummies) <- NULL
-factor_var <- levels(design_mat[,6])
-
-dummy_mat <- cbind(factor_var, dummies )
-
-res <- dplyr::left_join(design_mat, dummy_mat, by = "factor_var") %>% 
-  dplyr::select(-factor_var)
-
