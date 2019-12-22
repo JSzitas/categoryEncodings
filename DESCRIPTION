@@ -1,12 +1,14 @@
 Package: categoryEncodings
 Type: Package
-Title: What the Package Does Using Title Case
-Version: 1.0
+Title: Category Variable Encodings
+Version: 0.1
 Date: 2019-12-20
-Author: Juraj Szit√°s
-Maintainer: Juraj Szit√°s <JSzitas@users.noreply.github.com>
-Description: More details about what the package does. See
-         <http://cran.r-project.org/doc/manuals/r-release/R-exts.html#The-DESCRIPTION-file>
-         for details on how to write this part.
+Encoding: UTF-8
+Author: Juraj Szit·s
+Maintainer: Juraj Szit·s <JSzitas@users.noreply.github.com>
+Description: Simple fast encodings for factor/character category data using 
+             a data.table backend. 
 License: GPL (>= 2)
 RoxygenNote: 6.1.1
+Suggests: 
+    testthat
