@@ -1,22 +1,22 @@
+#' Encode a given factor variable using means encoding 
 #'
+#' @description Transforms cross sectional/time dummies to unified variables
 #'
+#' @param data The panel to transform
+#' @param cross.section The name of the transformed cross sectional variable supply as chracter.
+#' @param cross.section.columns The names of the columns indicating cross sections to collect.
+#' @param time.variable The name of the transformed time variable supply as character.
+#' @param time.variable.columns The names of the columns indicating time variables to collect.
+#' @return A new data.table X which contains the new columns 
+#' @details Uses the method from Johannemann et al.(2019) 
+#' 'Sufficient Representations for Categorical Variables'
+#' @import data.table
 #'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
+#' @examples
 
-
-
-encode_mean <- function(X, fact){
+encode_mean <- function(X, fact, keep_factor = FALSE){
   
-  means <- X %>% 
-    dplyr::group_by(!!dplyr::sym(fact)) %>%
-    dplyr::summarise_all(mean)
+  means <- dplyr::summarise_all(dplyr::group_by(X,!!dplyr::sym(fact)),mean)
   
   name_fact_var <- colnames(X)[which(colnames(X) == fact )]
   
@@ -27,17 +27,18 @@ encode_mean <- function(X, fact){
                         paste( colnames_other_X,
                           "_mean", sep = ""))
   
-  res <- dplyr::left_join(X, means, by = fact) %>% 
-    dplyr::select(-!!dplyr::sym(fact))
+  res <- dplyr::left_join(X, means, by = fact)
+  if(keep_factor == FALSE){
+    res <- dplyr::select( res, -!!dplyr::sym(fact))
+  }
   return(res)
   
 }
 
-encode_lowrank <- function(X, fact){
+encode_lowrank <- function(X, fact, keep_factor = FALSE){
   
-  means <- X %>% 
-    dplyr::group_by(!!dplyr::sym(fact)) %>%
-    dplyr::summarise_all(mean)
+  means <- dplyr::summarise_all(dplyr::group_by(X,!!dplyr::sym(fact)),mean)
+  
   
   name_fact_var <- colnames(X)[which(colnames(X) == fact )]
   
@@ -56,16 +57,17 @@ encode_lowrank <- function(X, fact){
                            name_fact_var )
   
   
-  res <- dplyr::left_join(X, low_rank, by = fact) %>% 
-    dplyr::select(-!!dplyr::sym(fact))
+  res <- dplyr::left_join(X, low_rank, by = fact)
+  if(keep_factor == FALSE){
+    res <- dplyr::select( res, -!!dplyr::sym(fact))
+  }
   return(res)
 }
 
-encode_SPCA <- function(X, fact){
+encode_SPCA <- function(X, fact, keep_factor = FALSE){
   
-  means <- X %>% 
-    dplyr::group_by(!!dplyr::sym(fact)) %>%
-    dplyr::summarise_all(mean)
+  means <- dplyr::summarise_all(dplyr::group_by(X,!!dplyr::sym(fact)),mean)
+  
   
   name_fact_var <- colnames(X)[which(colnames(X) == fact )]
   
@@ -84,13 +86,14 @@ encode_SPCA <- function(X, fact){
   colnames(PCAs) <- c( paste( colnames_other_X,"_SPCA", sep = ""),
                            name_fact_var )
   
-  
-  res <- dplyr::left_join(X, PCAs, by = fact) %>% 
-    dplyr::select(-!!dplyr::sym(fact))
+  res <- dplyr::left_join(X, PCAs, by = fact)
+  if(keep_factor == FALSE){
+    res <- dplyr::select( res, -!!dplyr::sym(fact))
+  }
   return(res)
 }
 
-encode_mnl <- function(X, fact){
+encode_mnl <- function(X, fact, keep_factor = FALSE){
 
   name_fact_var <- colnames(X)[which(colnames(X) == fact )]
   reference <- matrix(rep(0,ncol(X)), nrow = 1)
@@ -108,15 +111,17 @@ encode_mnl <- function(X, fact){
   mnl <- cbind(factor_var,mnl)
   rownames(mnl) <- NULL
 
-  res <- dplyr::left_join(X, mnl, by = fact) %>% 
-      dplyr::select(-!!dplyr::sym(fact))
+  res <- dplyr::left_join(X, mnl, by = fact)
+  if(keep_factor == FALSE){
+    res <- dplyr::select( res, -!!dplyr::sym(fact))
+  }
 
   return(res)
 }
 
 
 
-encode_dummy <- function(X, fact){
+encode_dummy <- function(X, fact, keep_factor = FALSE){
   
   
   fact_levs <- levels(X[,which(colnames(X) == fact )])
@@ -132,14 +137,15 @@ encode_dummy <- function(X, fact){
   
   dummy_mat <- cbind(factor_var, dummies )
   
-  res <- dplyr::left_join(X, dummy_mat, by = fact) %>% 
-    dplyr::select(-!!dplyr::sym(fact))
-  
+  res <- dplyr::left_join(X, dummy_mat, by = fact)
+  if(keep_factor == FALSE){
+    res <- dplyr::select( res, -!!dplyr::sym(fact))
+  }
   return(res)
 }
 
 
-encode_deviation <- function(X, fact){
+encode_deviation <- function(X, fact, keep_factor = FALSE){
   
   fact_levs <- levels(X[,which(colnames(X) == fact )])
   
@@ -154,19 +160,18 @@ encode_deviation <- function(X, fact){
   
   dummy_mat <- cbind(factor_var, dummies )
   
-  res <- dplyr::left_join(X, dummy_mat, by = fact) %>% 
-    dplyr::select(-!!dplyr::sym(fact))
-  
+  res <- dplyr::left_join(X, dummy_mat, by = fact)
+  if(keep_factor == FALSE){
+    res <- dplyr::select( res, -!!dplyr::sym(fact))
+  }
   return(res)
 }
 
 
-# median
-encode_mean <- function(X, fact){
+encode_median <- function(X, fact, keep_factor = FALSE){
   
-  medians <- X %>% 
-    dplyr::group_by(!!dplyr::sym(fact)) %>%
-    dplyr::summarise_all(median)
+  medians <- dplyr::summarise_all(dplyr::group_by(X,!!dplyr::sym(fact)),median)
+  
   
   name_fact_var <- colnames(X)[which(colnames(X) == fact )]
   
@@ -177,8 +182,10 @@ encode_mean <- function(X, fact){
                         paste( colnames_other_X,
                                "_mean", sep = ""))
   
-  res <- dplyr::left_join(X, medians, by = fact) %>% 
-    dplyr::select(-!!dplyr::sym(fact))
+  res <- dplyr::left_join(X, medians, by = fact)
+  if(keep_factor == FALSE){
+    res <- dplyr::select( res, -!!dplyr::sym(fact))
+  }
   return(res)
   
 }

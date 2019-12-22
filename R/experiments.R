@@ -112,3 +112,7 @@ means <- design_Y %>%
   dplyr::group_by(factor_var) %>%
   dplyr::summarise_all(mean) 
 
+means[2,2] <- means[1,2] - means[2,2]
+means[3,2] <- means[1,2] - means[3,2]
+
+
