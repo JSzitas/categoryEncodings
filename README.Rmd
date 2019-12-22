@@ -15,6 +15,7 @@ knitr::opts_chunk$set(
 # categoryEncodings
 
 <!-- badges: start -->
+[![Travis build status](https://travis-ci.org/JSzitas/categoryEncodings.svg?branch=master)](https://travis-ci.org/JSzitas/categoryEncodings)
 <!-- badges: end -->
 
 **categoryEncodings** intends to provide a fast way to encode 'factor' or qualitative variables through various methods. The intended implementation is with the use of **data.table**, with as few other dependencies as possible.
