@@ -100,8 +100,15 @@ dummy_mat <- cbind(factor_var, dummies )
 res <- dplyr::left_join(design_mat, dummy_mat, by = "factor_var") %>% 
   dplyr::select(-factor_var)
 
-#
+# dependent variable encodings
 
+design_Y <- data.frame(matrix(rnorm(100)))
+design_Y <- cbind(design_Y, sample(sample(letters, 10), 100, replace = TRUE))
+colnames(design_Y)[2] <- "factor_var"
 
+# helmert
 
+means <- design_Y %>% 
+  dplyr::group_by(factor_var) %>%
+  dplyr::summarise_all(mean) 
 

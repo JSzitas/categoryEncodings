@@ -161,3 +161,27 @@ encode_deviation <- function(X, fact){
 }
 
 
+# median
+encode_mean <- function(X, fact){
+  
+  medians <- X %>% 
+    dplyr::group_by(!!dplyr::sym(fact)) %>%
+    dplyr::summarise_all(median)
+  
+  name_fact_var <- colnames(X)[which(colnames(X) == fact )]
+  
+  colnames_other_X <- 
+    colnames( X[,which(colnames(X) != fact )] )
+  
+  colnames(medians) <- c( name_fact_var,
+                        paste( colnames_other_X,
+                               "_mean", sep = ""))
+  
+  res <- dplyr::left_join(X, medians, by = fact) %>% 
+    dplyr::select(-!!dplyr::sym(fact))
+  return(res)
+  
+}
+
+
+
