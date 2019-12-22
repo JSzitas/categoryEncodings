@@ -1,18 +1,25 @@
 #' Encode a given factor variable using means encoding 
 #'
-#' @description Transforms cross sectional/time dummies to unified variables
+#' @description Transforms the original design matrix using a means encoding.
 #'
-#' @param data The panel to transform
-#' @param cross.section The name of the transformed cross sectional variable supply as chracter.
-#' @param cross.section.columns The names of the columns indicating cross sections to collect.
-#' @param time.variable The name of the transformed time variable supply as character.
-#' @param time.variable.columns The names of the columns indicating time variables to collect.
-#' @return A new data.table X which contains the new columns 
+#' @param X The data.frame/data.table to transform. 
+#' @param fact The factor variable to encode by.
+#' @param keep_factor Whether to keep the original factor column(defaults to **FALSE**).
+#' @return A new data.table X which contains the new columns and optionally the old factor.
 #' @details Uses the method from Johannemann et al.(2019) 
-#' 'Sufficient Representations for Categorical Variables'
+#' 'Sufficient Representations for Categorical Variables' - Means Encoding.
 #' @import data.table
 #'
 #' @examples
+#' 
+#' design_mat <- cbind( data.frame( matrix(rnorm(5*100),ncol = 5) ),
+#'                      sample( sample(letters, 10), 100, replace = TRUE)
+#'                      )
+#' colnames(design_mat)[6] <- "factor_var"
+#' 
+#' encode_mean(X = design_mat, fact = "factor_var", keep_factor = FALSE)
+#' 
+#' 
 
 encode_mean <- function(X, fact, keep_factor = FALSE){
   
@@ -32,8 +39,30 @@ encode_mean <- function(X, fact, keep_factor = FALSE){
     res <- dplyr::select( res, -!!dplyr::sym(fact))
   }
   return(res)
-  
 }
+
+#' Encode a given factor variable using low rank encoding
+#'
+#' @description Transforms the original design matrix using a low rank encoding.
+#'
+#' @param X The data.frame/data.table to transform. 
+#' @param fact The factor variable to encode by.
+#' @param keep_factor Whether to keep the original factor column(defaults to **FALSE**).
+#' @return A new data.table X which contains the new columns and optionally the old factor.
+#' @details Uses the method from Johannemann et al.(2019) 
+#' 'Sufficient Representations for Categorical Variables' - Low rank.
+#' @import data.table
+#'
+#' @examples
+#' 
+#' design_mat <- cbind( data.frame( matrix(rnorm(5*100),ncol = 5) ),
+#'                      sample( sample(letters, 10), 100, replace = TRUE)
+#'                      )
+#' colnames(design_mat)[6] <- "factor_var"
+#' 
+#' encode_lowrank(X = design_mat, fact = "factor_var", keep_factor = FALSE)
+#' 
+#' 
 
 encode_lowrank <- function(X, fact, keep_factor = FALSE){
   
@@ -64,6 +93,29 @@ encode_lowrank <- function(X, fact, keep_factor = FALSE){
   return(res)
 }
 
+#' Encode a given factor variable using a sparse PCA representation
+#'
+#' @description Transforms the original design matrix using a sPCA encoding.
+#'
+#' @param X The data.frame/data.table to transform. 
+#' @param fact The factor variable to encode by.
+#' @param keep_factor Whether to keep the original factor column(defaults to **FALSE**).
+#' @return A new data.table X which contains the new columns and optionally the old factor.
+#' @details Uses the method from Johannemann et al.(2019) 
+#' 'Sufficient Representations for Categorical Variables' - sPCA.
+#' @import data.table
+#'
+#' @examples
+#' 
+#' design_mat <- cbind( data.frame( matrix(rnorm(5*100),ncol = 5) ),
+#'                      sample( sample(letters, 10), 100, replace = TRUE)
+#'                      )
+#' colnames(design_mat)[6] <- "factor_var"
+#' 
+#' encode_SPCA(X = design_mat, fact = "factor_var", keep_factor = FALSE)
+#' 
+#' 
+
 encode_SPCA <- function(X, fact, keep_factor = FALSE){
   
   means <- dplyr::summarise_all(dplyr::group_by(X,!!dplyr::sym(fact)),mean)
@@ -93,6 +145,29 @@ encode_SPCA <- function(X, fact, keep_factor = FALSE){
   return(res)
 }
 
+#' Encode a given factor variable using a multinomial logit representation
+#'
+#' @description Transforms the original design matrix using a mnl encoding.
+#'
+#' @param X The data.frame/data.table to transform. 
+#' @param fact The factor variable to encode by.
+#' @param keep_factor Whether to keep the original factor column(defaults to **FALSE**).
+#' @return A new data.table X which contains the new columns and optionally the old factor.
+#' @details Uses the method from Johannemann et al.(2019) 
+#' 'Sufficient Representations for Categorical Variables' - mnl.
+#' @import data.table
+#'
+#' @examples
+#' 
+#' design_mat <- cbind( data.frame( matrix(rnorm(5*100),ncol = 5) ),
+#'                      sample( sample(letters, 10), 100, replace = TRUE)
+#'                      )
+#' colnames(design_mat)[6] <- "factor_var"
+#' 
+#' encode_mnl(X = design_mat, fact = "factor_var", keep_factor = FALSE)
+#' 
+#' 
+
 encode_mnl <- function(X, fact, keep_factor = FALSE){
 
   name_fact_var <- colnames(X)[which(colnames(X) == fact )]
@@ -119,7 +194,28 @@ encode_mnl <- function(X, fact, keep_factor = FALSE){
   return(res)
 }
 
-
+#' Encode a given factor variable using dummy variables
+#'
+#' @description Transforms the original design matrix using a dummy variable encoding.
+#'
+#' @param X The data.frame/data.table to transform. 
+#' @param fact The factor variable to encode by.
+#' @param keep_factor Whether to keep the original factor column(defaults to **FALSE**).
+#' @return A new data.table X which contains the new columns and optionally the old factor.
+#' @details The basic dummy variable encoding, with reference class level set to 0. 
+#' The reference class is always the first class observed. 
+#' @import data.table
+#'
+#' @examples
+#' 
+#' design_mat <- cbind( data.frame( matrix(rnorm(5*100),ncol = 5) ),
+#'                      sample( sample(letters, 10), 100, replace = TRUE)
+#'                      )
+#' colnames(design_mat)[6] <- "factor_var"
+#' 
+#' encode_dummy(X = design_mat, fact = "factor_var", keep_factor = FALSE)
+#' 
+#' 
 
 encode_dummy <- function(X, fact, keep_factor = FALSE){
   
@@ -144,6 +240,28 @@ encode_dummy <- function(X, fact, keep_factor = FALSE){
   return(res)
 }
 
+#' Encode a given factor variable using deviation encoding
+#'
+#' @description Transforms the original design matrix using a deviation dummy encoding.
+#'
+#' @param X The data.frame/data.table to transform. 
+#' @param fact The factor variable to encode by.
+#' @param keep_factor Whether to keep the original factor column(defaults to **FALSE**).
+#' @return A new data.table X which contains the new columns and optionally the old factor.
+#' @details The deviation dummy variable encoding, with reference class level set to -1. 
+#' The reference class is always the last class observed. 
+#' @import data.table
+#'
+#' @examples
+#' 
+#' design_mat <- cbind( data.frame( matrix(rnorm(5*100),ncol = 5) ),
+#'                      sample( sample(letters, 10), 100, replace = TRUE)
+#'                      )
+#' colnames(design_mat)[6] <- "factor_var"
+#' 
+#' encode_deviation(X = design_mat, fact = "factor_var", keep_factor = FALSE)
+#' 
+#' 
 
 encode_deviation <- function(X, fact, keep_factor = FALSE){
   
@@ -168,6 +286,30 @@ encode_deviation <- function(X, fact, keep_factor = FALSE){
 }
 
 
+#' Encode a given factor variable using median encoding
+#'
+#' @description Transforms the original design matrix using a median encoding.
+#'
+#' @param X The data.frame/data.table to transform. 
+#' @param fact The factor variable to encode by.
+#' @param keep_factor Whether to keep the original factor column(defaults to **FALSE**).
+#' @return A new data.table X which contains the new columns and optionally the old factor.
+#' @details This might be somewhat lacking in theory (to the author's best knowledge), but 
+#' feel free to try it and publish the results if they turn out interesting on some 
+#' particular problem. 
+#' @import data.table
+#'
+#' @examples
+#' 
+#' design_mat <- cbind( data.frame( matrix(rnorm(5*100),ncol = 5) ),
+#'                      sample( sample(letters, 10), 100, replace = TRUE)
+#'                      )
+#' colnames(design_mat)[6] <- "factor_var"
+#' 
+#' encode_median(X = design_mat, fact = "factor_var", keep_factor = FALSE)
+#' 
+#' 
+
 encode_median <- function(X, fact, keep_factor = FALSE){
   
   medians <- dplyr::summarise_all(dplyr::group_by(X,!!dplyr::sym(fact)),median)
@@ -187,7 +329,6 @@ encode_median <- function(X, fact, keep_factor = FALSE){
     res <- dplyr::select( res, -!!dplyr::sym(fact))
   }
   return(res)
-  
 }
 
 
