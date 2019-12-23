@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1576972424206.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "581567230",
+    "id" : "A846CB5F",
+    "lastKnownWriteTime" : 1576972431,
+    "last_content_update" : 1576972431582,
+    "path" : "C:/Users/juraj/git_hub/categoryEncodings/R/encodings.R",
+    "project_path" : "R/encodings.R",
+    "properties" : {
+        "cursorPosition" : "163,0",
+        "scrollLine" : "142"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
