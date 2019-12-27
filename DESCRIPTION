@@ -1,12 +1,20 @@
 Package: categoryEncodings
 Type: Package
 Title: Category Variable Encodings
-Version: 0.1
+Version: 0.7
 Date: 2019-12-20
-Encoding: UTF-8
+Authors@R: 
+    person(given = "Juraj",
+           family = "Szitás",
+           role = c("aut", "cre"),
+           email = "szitas.juraj13@gmail.com")
+BugReports: https://github.com/JSzitas/postDoubleR/issues          
 Description: Simple fast encodings for factor/character category data using 
-             a data.table backend. 
-License: GPL (>= 2)
+             a data.table backend.  
+License: GPL-3
 RoxygenNote: 6.1.1
 Suggests: 
     testthat (>= 2.1.0)
+Imports: nnet,
+         sparsepca,
+         data.table
