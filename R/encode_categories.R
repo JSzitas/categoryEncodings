@@ -121,20 +121,18 @@ if(length(methods_used) > length(all_factor)){
   
 X <- data.table::data.table(X)
 
-final <- lapply(1:length(all_factor), FUN = function(i){
-  current_factor <- all_factor[i]
-  
-  X_curr <- cbind(X[, !..all_factor], X[,..current_factor])
-  
-  res <- do.call( what = method_table[[methods_used[[i]]]],
-                  args = list( X_curr,
-                               fact = current_factor,
-                               keep_factor = TRUE,
-                               encoding_only = TRUE))
 
-  
-})
-
+  final <- lapply(1:length(all_factor), FUN = function(i){
+    current_factor <- all_factor[i]
+    X_curr <- cbind(X[, !..all_factor], X[,..current_factor])
+    
+    res <- do.call( what = method_table[[methods_used[[i]]]],
+                    args = list( X_curr,
+                                 fact = current_factor,
+                                 keep_factor = TRUE,
+                                 encoding_only = TRUE))
+    })
+ 
 
 res <- X[final[[1]], on = all_factor[1]]
 if(length(all_factor) > 1){

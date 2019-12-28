@@ -228,8 +228,7 @@ encode_SPCA <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 
 encode_mnl <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 
-  factor_var <- levels(as.factor(unlist(X[,fact])))
-  
+
   if(is.numeric(fact)){
     fact <- colnames(X)[fact]
   }
@@ -248,10 +247,12 @@ encode_mnl <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
                           c("intercept",
                             (1:(ncol(mnl)-1))),
                           "_mnl", sep = "")
+  factor_var <- levels(as.factor(unlist(X[,..fact])))
 
   mnl <- cbind(factor_var,mnl)
   colnames(mnl)[1] <- fact
-  
+  mnl <- data.table::data.table(mnl)
+
   if(encoding_only == TRUE){
     if(keep_factor == FALSE){
       return(mnl[,-1])
