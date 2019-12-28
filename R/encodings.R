@@ -35,7 +35,8 @@ encode_mean <- function(X, fact, keep_factor = FALSE){
   means <- X[, lapply(.SD, mean, na.rm = TRUE), by = fact ]
 
   colnames(means) <- c( fact,
-                        paste( colnames(X)[which(colnames(X) != fact)],
+                        paste( fact,"_",
+                               colnames(X)[which(colnames(X) != fact)],
                                "_mean", sep = ""))
   X <- X[means, on = fact]
 
@@ -85,7 +86,8 @@ encode_lowrank <- function(X, fact, keep_factor = FALSE){
 
   
   low_rank <- cbind(data.table::data.table(svd(means[,2:ncol(means)])$u),means[,1])
-  colnames(low_rank) <- c( paste( colnames(X)[which(colnames(X) != fact)],
+  colnames(low_rank) <- c( paste( fact,"_",
+                                  colnames(X)[which(colnames(X) != fact)],
                                   "_lowrank", sep = ""),
                            fact)
 
@@ -135,10 +137,12 @@ encode_SPCA <- function(X, fact, keep_factor = FALSE){
   data.table::setkeyv(X, fact)
   means <- X[, lapply(.SD, mean, na.rm = TRUE), by = fact ]
   
-  SPCA <- sparsepca::spca(means[,2:ncol(means)])
+  SPCA <- sparsepca::spca(means[,2:ncol(means)], verbose = FALSE)
   
   PCAs <- cbind(SPCA[["scores"]], means[,1])
-  colnames(PCAs) <- c( paste( colnames(X)[which(colnames(X) != fact)],"_SPCA", sep = ""),
+  colnames(PCAs) <- c( paste( fact, "_",
+                              colnames(X)[which(colnames(X) != fact)],
+                              "_SPCA", sep = ""),
                        fact )
   
   X <- X[PCAs, on = fact]
@@ -189,13 +193,16 @@ encode_mnl <- function(X, fact, keep_factor = FALSE){
   reference <- matrix(rep(0,ncol(X)), nrow = 1)
   
   X <- data.table::data.table(X)
-  
+  random_file <- file()
+  sink(file = random_file,type = "output")
   mnl <- data.frame( rbind( reference,
                             coef( nnet::multinom( formula = formula(
                               paste(fact,"~.", sep = "")),
                               data = as.data.frame(X)) ) ))
-  
-  colnames(mnl) <- paste( c("intercept",
+  sink()
+  close(random_file)
+  colnames(mnl) <- paste( fact,"_",
+                          c("intercept",
                             colnames(X)[which(colnames(X) != fact)]),
                           "_mnl", sep = "")
   mnl <- cbind(factor_var,mnl)
@@ -248,8 +255,9 @@ encode_dummy <- function(X, fact, keep_factor = FALSE){
   
   X <- data.table::data.table(X)
   dummies <- data.frame(rbind(reference, diag(length(fact_levs)-1)))
-  colnames(dummies) <- paste(fact_levs[2:length(fact_levs)],
-                             "_dummy" , sep = "")
+  colnames(dummies) <- paste( fact,"_",
+                              fact_levs[2:length(fact_levs)],
+                              "_dummy" , sep = "")
   
   rownames(dummies) <- NULL
   factor_var <- fact_levs
@@ -303,8 +311,9 @@ encode_deviation <- function(X, fact, keep_factor = FALSE){
   
   X <- data.table::data.table(X)
   dummies <- data.frame(rbind(reference, diag(length(fact_levs)-1)))
-  colnames(dummies) <- paste(fact_levs[1:length(fact_levs)-1],
-                             "_deviate" , sep = "")
+  colnames(dummies) <- paste( fact,"_",
+                              fact_levs[1:length(fact_levs)-1],
+                              "_deviate" , sep = "")
   
   rownames(dummies) <- NULL
   factor_var <- fact_levs
@@ -359,7 +368,8 @@ encode_median <- function(X, fact, keep_factor = FALSE){
   medians <- X[, lapply(.SD, median, na.rm = TRUE), by = fact ]
   
   colnames(medians) <- c( fact,
-                        paste( colnames(X)[which(colnames(X) != fact)],
+                        paste( fact,"_",
+                               colnames(X)[which(colnames(X) != fact)],
                                "_median", sep = ""))
   X <- X[medians, on = fact]
   

@@ -2,10 +2,11 @@ Package: categoryEncodings
 Type: Package
 Title: Category Variable Encodings
 Version: 0.7
+Encoding: UTF-8
 Date: 2019-12-20
 Authors@R: 
     person(given = "Juraj",
-           family = "Szitás",
+           family = "Szitas",
            role = c("aut", "cre"),
            email = "szitas.juraj13@gmail.com")
 BugReports: https://github.com/JSzitas/postDoubleR/issues          
