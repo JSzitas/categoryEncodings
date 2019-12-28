@@ -137,9 +137,16 @@ final <- lapply(1:length(all_factor), FUN = function(i){
 
 
 res <- X[final[[1]], on = all_factor[1]]
-for(i in 2:length(all_factor)){
-  res <- res[final[[i]], on = all_factor[i]]
+if(length(all_factor) > 1){
+  for(i in 2:length(all_factor)){
+    res <- res[final[[i]], on = all_factor[i]]
+  }  
 }
+if(keep == FALSE){
+  res[,(all_factor) := NULL]
+}
+
+
 return(res)
 }
 
