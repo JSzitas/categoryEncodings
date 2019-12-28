@@ -6,6 +6,9 @@
 #' @param fact The factor variable to encode by - either a positive integer specifying the 
 #'             column number, or the name of the column.
 #' @param keep_factor Whether to keep the original factor column(defaults to **FALSE**).
+#' @param encoding_only Whether to return the full transformed dataset or only the new 
+#'                      columns. Defaults to FALSE and returns the full dataset.
+#' 
 #' @return A new data.table X which contains the new columns and optionally the old factor.
 #' @details Uses the method from Johannemann et al.(2019) 
 #' 'Sufficient Representations for Categorical Variables' - Means Encoding.
@@ -25,7 +28,7 @@
 
 
 
-encode_mean <- function(X, fact, keep_factor = FALSE){
+encode_mean <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 
   if(is.numeric(fact)){
     fact <- colnames(X)[fact]
@@ -38,6 +41,16 @@ encode_mean <- function(X, fact, keep_factor = FALSE){
                         paste( fact,"_",
                                colnames(X)[which(colnames(X) != fact)],
                                "_mean", sep = ""))
+  
+  if(encoding_only == TRUE){
+    if(keep_factor == FALSE){
+      return(means[,-1])
+    }
+    else{
+      return(means)  
+    }
+  }
+  
   X <- X[means, on = fact]
 
   if(keep_factor == FALSE){
@@ -55,6 +68,9 @@ encode_mean <- function(X, fact, keep_factor = FALSE){
 #' @param fact The factor variable to encode by - either a positive integer specifying the 
 #'             column number, or the name of the column.
 #' @param keep_factor Whether to keep the original factor column(defaults to **FALSE**).
+#' @param encoding_only Whether to return the full transformed dataset or only the new 
+#'                      columns. Defaults to FALSE and returns the full dataset.
+#' 
 #' @return A new data.table X which contains the new columns and optionally the old factor.
 #' @details Uses the method from Johannemann et al.(2019) 
 #' 'Sufficient Representations for Categorical Variables' - Low rank.
@@ -74,7 +90,7 @@ encode_mean <- function(X, fact, keep_factor = FALSE){
 #' 
 #' 
 
-encode_lowrank <- function(X, fact, keep_factor = FALSE){
+encode_lowrank <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
   
   if(is.numeric(fact)){
     fact <- colnames(X)[fact]
@@ -85,11 +101,21 @@ encode_lowrank <- function(X, fact, keep_factor = FALSE){
   means <- X[, lapply(.SD, mean, na.rm = TRUE), by = fact ]
 
   
-  low_rank <- cbind(data.table::data.table(svd(means[,2:ncol(means)])$u),means[,1])
-  colnames(low_rank) <- c( paste( fact,"_",
+  low_rank <- cbind( means[,1], data.table::data.table(svd(means[,2:ncol(means)])$u))
+  colnames(low_rank) <- c( fact,
+                           paste( fact,"_",
                                   colnames(X)[which(colnames(X) != fact)],
-                                  "_lowrank", sep = ""),
-                           fact)
+                                  "_lowrank", sep = ""))
+  
+  if(encoding_only == TRUE){
+    if(keep_factor == FALSE){
+      return(low_rank[,-1])
+    }
+    else{
+      return(low_rank)  
+    }
+  }
+  
 
   X <- X[low_rank, on = fact]
   
@@ -108,6 +134,9 @@ encode_lowrank <- function(X, fact, keep_factor = FALSE){
 #' @param fact The factor variable to encode by - either a positive integer specifying the 
 #'             column number, or the name of the column.
 #' @param keep_factor Whether to keep the original factor column(defaults to **FALSE**).
+#' @param encoding_only Whether to return the full transformed dataset or only the new 
+#'                      columns. Defaults to FALSE and returns the full dataset.  
+#'                      
 #' @return A new data.table X which contains the new columns and optionally the old factor.
 #' @details Uses the method from Johannemann et al.(2019) 
 #' 'Sufficient Representations for Categorical Variables' - sPCA.
@@ -128,7 +157,7 @@ encode_lowrank <- function(X, fact, keep_factor = FALSE){
 #' 
 #' 
 
-encode_SPCA <- function(X, fact, keep_factor = FALSE){
+encode_SPCA <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 
   if(is.numeric(fact)){
     fact <- colnames(X)[fact]
@@ -139,11 +168,22 @@ encode_SPCA <- function(X, fact, keep_factor = FALSE){
   
   SPCA <- sparsepca::spca(means[,2:ncol(means)], verbose = FALSE)
   
-  PCAs <- cbind(SPCA[["scores"]], means[,1])
-  colnames(PCAs) <- c( paste( fact, "_",
+  PCAs <- cbind(means[,1], SPCA[["scores"]])
+  colnames(PCAs) <- c( fact ,
+                       paste( fact, "_",
                               colnames(X)[which(colnames(X) != fact)],
-                              "_SPCA", sep = ""),
-                       fact )
+                              "_SPCA", sep = "")
+                       )
+  
+  if(encoding_only == TRUE){
+    if(keep_factor == FALSE){
+      return(PCAs[,-1])
+    }
+    else{
+      return(PCAs)  
+    }
+  }
+  
   
   X <- X[PCAs, on = fact]
   
@@ -161,6 +201,9 @@ encode_SPCA <- function(X, fact, keep_factor = FALSE){
 #' @param fact The factor variable to encode by - either a positive integer specifying the 
 #'             column number, or the name of the column.
 #' @param keep_factor Whether to keep the original factor column(defaults to **FALSE**).
+#' @param encoding_only Whether to return the full transformed dataset or only the new 
+#'                      columns. Defaults to FALSE and returns the full dataset.   
+#'                                          
 #' @return A new data.table X which contains the new columns and optionally the old factor.
 #' @details Uses the method from Johannemann et al.(2019) 
 #' 'Sufficient Representations for Categorical Variables' - mnl.
@@ -183,7 +226,7 @@ encode_SPCA <- function(X, fact, keep_factor = FALSE){
 #' 
 #' 
 
-encode_mnl <- function(X, fact, keep_factor = FALSE){
+encode_mnl <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 
   factor_var <- levels(unlist(X[,fact]))
   
@@ -201,13 +244,21 @@ encode_mnl <- function(X, fact, keep_factor = FALSE){
                               data = as.data.frame(X)) ) ))
   sink()
   close(random_file)
-  colnames(mnl) <- paste( fact,"_",
+  colnames(mnl) <-  paste( fact,"_",
                           c("intercept",
                             colnames(X)[which(colnames(X) != fact)]),
                           "_mnl", sep = "")
   mnl <- cbind(factor_var,mnl)
+  colnames(mnl)[1] <- fact
   rownames(mnl) <- NULL
-
+  if(encoding_only == TRUE){
+    if(keep_factor == FALSE){
+      return(mnl[,-1])
+    }
+    else{
+      return(mnl)  
+    }
+  }
   X <- X[mnl, on = fact]
   
   if(keep_factor == FALSE){
@@ -224,6 +275,9 @@ encode_mnl <- function(X, fact, keep_factor = FALSE){
 #' @param fact The factor variable to encode by - either a positive integer specifying the 
 #'             column number, or the name of the column.
 #' @param keep_factor Whether to keep the original factor column(defaults to **FALSE**).
+#' @param encoding_only Whether to return the full transformed dataset or only the new 
+#'                      columns. Defaults to FALSE and returns the full dataset.
+#' 
 #' @return A new data.table X which contains the new columns and optionally the old factor.
 #' @details The basic dummy variable encoding, with reference class level set to 0. 
 #' The reference class is always the first class observed. 
@@ -243,7 +297,7 @@ encode_mnl <- function(X, fact, keep_factor = FALSE){
 #' 
 #' 
 
-encode_dummy <- function(X, fact, keep_factor = FALSE){
+encode_dummy <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
   
   if(is.numeric(fact)){
     fact <- colnames(X)[fact]
@@ -263,6 +317,16 @@ encode_dummy <- function(X, fact, keep_factor = FALSE){
   factor_var <- fact_levs
   
   dummy_mat <- cbind(factor_var, dummies )
+  colnames(dummy_mat)[1] <- fact
+  
+  if(encoding_only == TRUE){
+    if(keep_factor == FALSE){
+      return(dummy_mat[,-1])
+    }
+    else{
+      return(dummy_mat)  
+    }
+  }
   
   X <- X[dummy_mat, on = fact]
   
@@ -280,6 +344,9 @@ encode_dummy <- function(X, fact, keep_factor = FALSE){
 #' @param fact The factor variable to encode by - either a positive integer specifying the 
 #'             column number, or the name of the column.
 #' @param keep_factor Whether to keep the original factor column(defaults to **FALSE**).
+#' @param encoding_only Whether to return the full transformed dataset or only the new 
+#'                      columns. Defaults to FALSE and returns the full dataset.
+#' 
 #' @return A new data.table X which contains the new columns and optionally the old factor.
 #' @details The deviation dummy variable encoding, with reference class level set to -1. 
 #' The reference class is always the last class observed. 
@@ -299,7 +366,7 @@ encode_dummy <- function(X, fact, keep_factor = FALSE){
 #' 
 #' 
 
-encode_deviation <- function(X, fact, keep_factor = FALSE){
+encode_deviation <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
   
   
   if(is.numeric(fact)){
@@ -319,6 +386,16 @@ encode_deviation <- function(X, fact, keep_factor = FALSE){
   factor_var <- fact_levs
   
   dummy_mat <- cbind(factor_var, dummies )
+  colnames(dummy_mat)[1] <- fact
+  
+  if(encoding_only == TRUE){
+    if(keep_factor == FALSE){
+      return(dummy_mat[,-1])
+    }
+    else{
+      return(dummy_mat)  
+    }
+  }
   
   X <- X[dummy_mat, on = fact]
   
@@ -337,6 +414,9 @@ encode_deviation <- function(X, fact, keep_factor = FALSE){
 #' @param fact The factor variable to encode by - either a positive integer specifying the 
 #'             column number, or the name of the column.
 #' @param keep_factor Whether to keep the original factor column(defaults to **FALSE**).
+#' @param encoding_only Whether to return the full transformed dataset or only the new 
+#'                      columns. Defaults to FALSE and returns the full dataset.
+#' 
 #' @return A new data.table X which contains the new columns and optionally the old factor.
 #' @details This might be somewhat lacking in theory (to the author's best knowledge), but 
 #' feel free to try it and publish the results if they turn out interesting on some 
@@ -358,7 +438,7 @@ encode_deviation <- function(X, fact, keep_factor = FALSE){
 #' 
 #' 
 
-encode_median <- function(X, fact, keep_factor = FALSE){
+encode_median <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
   
   if(is.numeric(fact)){
     fact <- colnames(X)[fact]
@@ -371,6 +451,14 @@ encode_median <- function(X, fact, keep_factor = FALSE){
                         paste( fact,"_",
                                colnames(X)[which(colnames(X) != fact)],
                                "_median", sep = ""))
+  if(encoding_only == TRUE){
+    if(keep_factor == FALSE){
+      return(medians[,-1])
+    }
+    else{
+      return(medians)  
+    }
+  }
   X <- X[medians, on = fact]
   
   if(keep_factor == FALSE){
