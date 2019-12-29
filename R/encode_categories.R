@@ -33,7 +33,6 @@
 #'          a simple heuristic - where 
 #'          
 #' @import data.table
-#' @importFrom data.table '..'          
 #' @export
 #' 
 #' @examples

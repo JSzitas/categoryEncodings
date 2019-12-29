@@ -4,7 +4,7 @@
 \alias{encode_mean}
 \title{Encode a given factor variable using means encoding}
 \usage{
-encode_mean(X, fact, keep_factor = FALSE)
+encode_mean(X, fact, keep_factor = FALSE, encoding_only = FALSE)
 }
 \arguments{
 \item{X}{The data.frame/data.table to transform.}
@@ -13,6 +13,9 @@ encode_mean(X, fact, keep_factor = FALSE)
 column number, or the name of the column.}
 
 \item{keep_factor}{Whether to keep the original factor column(defaults to **FALSE**).}
+
+\item{encoding_only}{Whether to return the full transformed dataset or only the new 
+columns. Defaults to FALSE and returns the full dataset.}
 }
 \value{
 A new data.table X which contains the new columns and optionally the old factor.
