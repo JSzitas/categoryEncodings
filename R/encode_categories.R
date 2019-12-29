@@ -92,8 +92,7 @@ encode_categories <- function( X,
   {
     methods_used <- lapply( method, FUN = match, table = method_names)
           if(sum(is.na(unlist(methods_used))) == TRUE ){
-            stop("Failed to match the supplied method(s).
-                 Please confirm correct method specification.")
+            stop("Failed to match the supplied method(s).")
           }
   }
   else
@@ -120,7 +119,7 @@ if(length(methods_used) > length(all_factor)){
   warning(paste("More methods(", length(methods_used),") than factors
   (", length(all_factor),") detected, using only the first few, 
            until there is enough methods for the number of factor variables, 
-           and dropping the rest."), sep = "")
+           and dropping the rest.", sep = ""))
   methods_used <- methods_used[1:length(all_factor)]
 }  
   
