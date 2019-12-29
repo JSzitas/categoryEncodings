@@ -53,6 +53,8 @@ encode_categories <- function( X,
                          keep = FALSE )
 {
   
+  X <- data.table::data.table(X)
+  
   is_likely_factor <- function(datafm)
     {
     res <- lapply(datafm, FUN = function(i){
@@ -86,30 +88,33 @@ encode_categories <- function( X,
   method_names <- c( "mean", "median", "deviation",
                      "lowrank", "SPCA", "mnl",
                      "dummy")
-  if(!is.null(method)){
+  if(!is.null(method))
+  {
     methods_used <- lapply( method, FUN = match, table = method_names)
           if(sum(is.na(unlist(methods_used))) == TRUE ){
             stop("Failed to match the supplied method(s).
                  Please confirm correct method specification.")
           }
   }
-  else{
-   methods_used <- lapply(1:length(all_factor), FUN = function(i)
-      {
+  else
+  {
+   methods_used <- lapply(1:length(all_factor), FUN = function(i){
      total_levels <- length(levels(unlist(X[,(all_factor[i])])))
-       if( total_levels > ncol(X) - length(all_factor)){
-         
+     # more subgroups than there are other columns
+       if( total_levels > ncol(X[,!..all_factor]) ){
+        # default to mean encoding
+         return(1)
        }
      else{
-       
-     }
-    })
-    
+       return(5)  }})
   }
 
+
 if(length(methods_used) < length(all_factor)){
-  stop("The number of supplied methods is not equal to the number of factors. 
-        Please specify the correct number of methods, and/or factor variables.")
+  stop(paste("The number of supplied methods(", length(methods_used),
+  ") is not equal to the number of factors(", length(all_factor),").", 
+        "Please specify the correct number of methods, and/or factor variables.",
+             sep = ""))
 }  
 if(length(methods_used) > length(all_factor)){
   warning(paste("More methods(", length(methods_used),") than factors
@@ -119,9 +124,6 @@ if(length(methods_used) > length(all_factor)){
   methods_used <- methods_used[1:length(all_factor)]
 }  
   
-X <- data.table::data.table(X)
-
-
   final <- lapply(1:length(all_factor), FUN = function(i){
     current_factor <- all_factor[i]
     X_curr <- cbind(X[, !..all_factor], X[,..current_factor])
