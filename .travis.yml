@@ -22,13 +22,11 @@ script:
     R CMD build .
     travis_wait 40 R CMD check categoryEncodings*tar.gz
 
- after_success:
-    - Rscript -e 'covr::codecov()'
-
 notifications:
   email:
     on_success: change
     on_failure: change
     
-    
+after_success:
+    - Rscript -e 'covr::codecov()'
     
