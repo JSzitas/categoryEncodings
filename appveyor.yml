@@ -16,11 +16,6 @@ cache:
 environment:
   NOT_CRAN: true
 
-  global:
-
-  - R_VERSION: stable
-
-
 
 matrix:
   fast_finish: true
