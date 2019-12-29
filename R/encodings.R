@@ -228,7 +228,7 @@ encode_SPCA <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 
 encode_mnl <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 
-
+  .. <- NULL
   if(is.numeric(fact)){
     fact <- colnames(X)[fact]
   }
@@ -247,7 +247,7 @@ encode_mnl <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
                           c("intercept",
                             (1:(ncol(mnl)-1))),
                           "_mnl", sep = "")
-  factor_var <- levels(as.factor(unlist(X[,..fact])))
+  factor_var <- levels(as.factor(unlist(X[, .SD, .SDcols = fact])))
 
   mnl <- cbind(factor_var,mnl)
   colnames(mnl)[1] <- fact
@@ -300,13 +300,13 @@ encode_mnl <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 #' 
 
 encode_dummy <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
-  
+  .. <- NULL
   X <- data.table::data.table(X)
   if(is.numeric(fact)){
     fact <- colnames(X)[fact]
   }
 
-  factor_var <- levels(as.factor(unlist(X[,..fact])))
+  factor_var <- levels(as.factor(unlist(X[, .SD, .SDcols = fact])))
   
   reference <- rep(0, length(factor_var)-1)
   
@@ -368,14 +368,14 @@ encode_dummy <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 #' 
 
 encode_deviation <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
-  
+
   X <- data.table::data.table(X)
   
   if(is.numeric(fact)){
     fact <- colnames(X)[fact]
   }
 
-  factor_var <- levels(as.factor(unlist(X[,..fact])))
+  factor_var <- levels(as.factor(unlist(X[, .SD, .SDcols = fact])))
   
   reference <- rep(-1, (length(factor_var)-1))
 

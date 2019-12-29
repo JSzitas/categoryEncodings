@@ -33,6 +33,7 @@
 #'          a simple heuristic - where 
 #'          
 #' @import data.table
+#' @importFrom data.table .SD
 #' @export
 #' 
 #' @examples
@@ -51,7 +52,6 @@ encode_categories <- function( X,
                          method = NULL,
                          keep = FALSE )
 {
-  
   X <- data.table::data.table(X)
   
   is_likely_factor <- function(datafm)
@@ -99,7 +99,8 @@ encode_categories <- function( X,
    methods_used <- lapply(1:length(all_factor), FUN = function(i){
      total_levels <- length(levels(unlist(X[,(all_factor[i])])))
      # more subgroups than there are other columns
-       if( total_levels > ncol(X[,!..all_factor]) ){
+      # if( total_levels > ncol(X[,!..all_factor]) ){
+         if( total_levels > (ncol(X) - ncol(X[, .SD, .SDcols = all_factor])) ){
         # default to mean encoding
          return(1)
        }
@@ -124,7 +125,8 @@ if(length(methods_used) > length(all_factor)){
   
   final <- lapply(1:length(all_factor), FUN = function(i){
     current_factor <- all_factor[i]
-    X_curr <- cbind(X[, !..all_factor], X[,..current_factor])
+
+    X_curr <- cbind(X[, .SD, .SDcols = !all_factor], X[,.SD, .SDcols = current_factor])
     
     res <- do.call( what = method_table[[methods_used[[i]]]],
                     args = list( X_curr,
