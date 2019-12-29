@@ -301,22 +301,21 @@ encode_mnl <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 
 encode_dummy <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
   
+  X <- data.table::data.table(X)
   if(is.numeric(fact)){
     fact <- colnames(X)[fact]
   }
 
-  fact_levs <- levels(X[,which(colnames(X) == fact )])
+  factor_var <- levels(as.factor(unlist(X[,..fact])))
   
-  reference <- rep(0, length(fact_levs)-1)
+  reference <- rep(0, length(factor_var)-1)
   
-  X <- data.table::data.table(X)
-  dummies <- data.frame(rbind(reference, diag(length(fact_levs)-1)))
+  dummies <- data.frame(rbind(reference, diag(length(factor_var)-1)))
   colnames(dummies) <- paste( fact,"_",
-                              fact_levs[2:length(fact_levs)],
+                              factor_var[2:length(factor_var)],
                               "_dummy" , sep = "")
   
   rownames(dummies) <- NULL
-  factor_var <- fact_levs
   
   dummy_mat <- cbind(factor_var, dummies )
   colnames(dummy_mat)[1] <- fact
@@ -370,22 +369,23 @@ encode_dummy <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 
 encode_deviation <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
   
+  X <- data.table::data.table(X)
   
   if(is.numeric(fact)){
     fact <- colnames(X)[fact]
   }
 
-  fact_levs <- levels(X[,which(colnames(X) == fact )])
-  reference <- rep(-1, length(fact_levs)-1)
+  factor_var <- levels(as.factor(unlist(X[,..fact])))
   
-  X <- data.table::data.table(X)
-  dummies <- data.frame(rbind(reference, diag(length(fact_levs)-1)))
+  reference <- rep(-1, (length(factor_var)-1))
+
+  dummies <- data.frame(rbind(reference, diag(length(factor_var)-1)))
   colnames(dummies) <- paste( fact,"_",
-                              fact_levs[1:length(fact_levs)-1],
+                              factor_var[1:length(factor_var)-1],
                               "_deviate" , sep = "")
   
   rownames(dummies) <- NULL
-  factor_var <- fact_levs
+
   
   dummy_mat <- cbind(factor_var, dummies )
   colnames(dummy_mat)[1] <- fact
