@@ -20,7 +20,6 @@ environment:
 
   - R_VERSION: stable
 
-  - R_VERSION: patched
 
 
 matrix:
