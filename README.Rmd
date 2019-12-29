@@ -23,6 +23,6 @@ knitr::opts_chunk$set(
 
 **categoryEncodings** intends to provide a fast way to encode 'factor' or qualitative variables through various methods. The packages uses **data.table** as the backend for speed, with as few other dependencies as possible.
 
-Currently there are functions one could use for working with factors on a one-by-one basis. Support for automating this somewhat ardous task is intended and incoming with the 1.0 release. 
+The current version features automatic inference of factors and uses a very simple heuristic for encoding, as well as manual controls. 
 
-
+I hope to close in on version 1.0, and a *CRAN* release, rather shortly (late January 2019 at the very latest!).
