@@ -56,12 +56,13 @@ encode_categories <- function( X,
 {
   X <- data.table::data.table(X)
   if(!is.null(Y)){
-    Y_name <- Y
     if(is.numeric(Y)){
-      Y_name <- colnames(X)[Y]
+      Y <- colnames(X)[Y]
     }
-    Y <- X[,.SD,.SDcols = Y_name]
-    X <- X[, (Y_name) := NULL]
+    X_curr <- X[, .SD, .SDcols = !Y]
+  }
+  else{
+    X_curr <- X
   }
   is_likely_factor <- function(datafm)
     {
@@ -135,8 +136,9 @@ if(length(methods_used) > length(all_factor)){
   
   final <- lapply(1:length(all_factor), FUN = function(i){
     current_factor <- all_factor[i]
-
-    X_curr <- cbind(X[, .SD, .SDcols = !all_factor], X[,.SD, .SDcols = current_factor])
+    
+    X_curr <- cbind( X_curr[,.SD, .SDcols = !all_factor],
+                     X_curr[,.SD, .SDcols = current_factor])
     
     res <- do.call( what = method_table[[methods_used[[i]]]],
                     args = list( X_curr,
@@ -155,9 +157,7 @@ if(length(all_factor) > 1){
 if(keep == FALSE){
   res[,(all_factor) := NULL]
 }
-if(!is.null(Y)){
-  res <- cbind(Y,res)
-}
+
 
 return(res)
 }

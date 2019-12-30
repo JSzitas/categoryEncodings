@@ -8,7 +8,7 @@
 #' @param keep_factor Whether to keep the original factor column(defaults to **FALSE**).
 #' @param encoding_only Whether to return the full transformed dataset or only the new 
 #'                      columns. Defaults to FALSE and returns the full dataset.
-#' 
+#'                      
 #' @return A new data.table X which contains the new columns and optionally the old factor.
 #' @details Uses the method from Johannemann et al.(2019) 
 #' 'Sufficient Representations for Categorical Variables' - Means Encoding.
@@ -28,18 +28,22 @@
 
 
 
-encode_mean <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
+encode_mean <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE ){
 
   if(is.numeric(fact)){
     fact <- colnames(X)[fact]
   }
   X <- data.table::data.table(X)
   data.table::setkeyv(X, fact)
-  means <- X[, lapply(.SD, mean, na.rm = TRUE), by = fact ]
+  
+
+    means <- X[, lapply(.SD, mean, na.rm = TRUE), by = fact] 
+
+  sel_vec <- which(colnames(X) == fact)
 
   colnames(means) <- c( fact,
                         paste( fact,"_",
-                               colnames(X)[which(colnames(X) != fact)],
+                               colnames(X)[-sel_vec],
                                "_mean", sep = ""))
   
   if(encoding_only == TRUE){
@@ -70,7 +74,7 @@ encode_mean <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 #' @param keep_factor Whether to keep the original factor column(defaults to **FALSE**).
 #' @param encoding_only Whether to return the full transformed dataset or only the new 
 #'                      columns. Defaults to FALSE and returns the full dataset.
-#' 
+#'                      
 #' @return A new data.table X which contains the new columns and optionally the old factor.
 #' @details Uses the method from Johannemann et al.(2019) 
 #' 'Sufficient Representations for Categorical Variables' - Low rank.
@@ -90,16 +94,15 @@ encode_mean <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 #' 
 #' 
 
-encode_lowrank <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
-  
+encode_lowrank <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE)
+{
   if(is.numeric(fact)){
     fact <- colnames(X)[fact]
   }
   X <- data.table::data.table(X)
   data.table::setkeyv(X, fact)
-  .SD <- NULL
-  means <- X[, lapply(.SD, mean, na.rm = TRUE), by = fact ]
 
+    means <- X[, lapply(.SD, mean, na.rm = TRUE), by = fact] 
   
   low_rank <- cbind( means[,1], data.table::data.table(svd(means[,2:ncol(means)])$u))
   colnames(low_rank) <- c( fact,
@@ -203,7 +206,7 @@ encode_SPCA <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 #' @param keep_factor Whether to keep the original factor column(defaults to **FALSE**).
 #' @param encoding_only Whether to return the full transformed dataset or only the new 
 #'                      columns. Defaults to FALSE and returns the full dataset.   
-#'                                          
+#'                      
 #' @return A new data.table X which contains the new columns and optionally the old factor.
 #' @details Uses the method from Johannemann et al.(2019) 
 #' 'Sufficient Representations for Categorical Variables' - mnl.
@@ -279,7 +282,7 @@ encode_mnl <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 #' @param keep_factor Whether to keep the original factor column(defaults to **FALSE**).
 #' @param encoding_only Whether to return the full transformed dataset or only the new 
 #'                      columns. Defaults to FALSE and returns the full dataset.
-#' 
+#'                      
 #' @return A new data.table X which contains the new columns and optionally the old factor.
 #' @details The basic dummy variable encoding, with reference class level set to 0. 
 #' The reference class is always the first class observed. 
@@ -347,7 +350,7 @@ encode_dummy <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 #' @param keep_factor Whether to keep the original factor column(defaults to **FALSE**).
 #' @param encoding_only Whether to return the full transformed dataset or only the new 
 #'                      columns. Defaults to FALSE and returns the full dataset.
-#' 
+#'                      
 #' @return A new data.table X which contains the new columns and optionally the old factor.
 #' @details The deviation dummy variable encoding, with reference class level set to -1. 
 #' The reference class is always the last class observed. 
@@ -418,7 +421,7 @@ encode_deviation <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE
 #' @param keep_factor Whether to keep the original factor column(defaults to **FALSE**).
 #' @param encoding_only Whether to return the full transformed dataset or only the new 
 #'                      columns. Defaults to FALSE and returns the full dataset.
-#' 
+#'                      
 #' @return A new data.table X which contains the new columns and optionally the old factor.
 #' @details This might be somewhat lacking in theory (to the author's best knowledge), but 
 #' feel free to try it and publish the results if they turn out interesting on some 
