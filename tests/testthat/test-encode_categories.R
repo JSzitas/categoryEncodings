@@ -87,13 +87,10 @@ test_that("Automatic encoding works with factor and method specification", {
    expect_equal(ncol(result), 10)
    expect_equal(result, encode_mean(design_mat_1, fact = 6))
    
-   result <- encode_categories(design_mat_4, fact = 6:10, method = c("mean",
-                                                                     "median",
-                                                                     "lowrank",
-                                                                     "SPCA",
-                                                                     "deviation"))
+   result <- encode_categories(design_mat_2, fact = 6:7, method = c("mean",
+                                                                     "median"))
    
-   expect_equal(ncol(result), 26)
+   expect_equal(ncol(result), 15)
 })
 
 
