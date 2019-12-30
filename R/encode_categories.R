@@ -3,6 +3,7 @@
 #' @description Transforms the original design matrix automatically, using the appropriate encoding.
 #'
 #' @param X The data.frame/data.table to transform. 
+#' @param Y Optional: The dependent variable to ignore in the transformation.
 #' @param fact Optional: The factor variable(s) to encode by -
 #'             either positive integer(s) specifying the 
 #'             column number, or the name(s) of the column.
@@ -48,12 +49,20 @@
 
 
 encode_categories <- function( X,
-                         fact = NULL,
-                         method = NULL,
-                         keep = FALSE )
+                               Y = NULL,
+                               fact = NULL,
+                               method = NULL,
+                               keep = FALSE )
 {
   X <- data.table::data.table(X)
-  
+  if(!is.null(Y)){
+    Y_name <- Y
+    if(is.numeric(Y)){
+      Y_name <- colnames(X)[Y]
+    }
+    Y <- X[,.SD,.SDcols = Y_name]
+    X <- X[, (Y_name) := NULL]
+  }
   is_likely_factor <- function(datafm)
     {
     res <- lapply(datafm, FUN = function(i){
@@ -72,6 +81,7 @@ encode_categories <- function( X,
     }
   if(is.null(fact)){
     all_factor <- names(which(is_likely_factor(X) == TRUE))
+    warning("\n Inferring factors: \n ", paste(all_factor, "\n"))
   }
   else{
     if(is.numeric(fact)){
@@ -145,7 +155,9 @@ if(length(all_factor) > 1){
 if(keep == FALSE){
   res[,(all_factor) := NULL]
 }
-
+if(!is.null(Y)){
+  res <- cbind(Y,res)
+}
 
 return(res)
 }
