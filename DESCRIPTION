@@ -10,8 +10,9 @@ Authors@R:
            role = c("aut", "cre"),
            email = "szitas.juraj13@gmail.com")
 BugReports: https://github.com/JSzitas/postDoubleR/issues          
-Description: Simple fast encodings for factor/character category data using 
-             a data.table backend.  
+Description: Simple fast encodings for category data using 
+             a data.table backend. Supports automatic conversion 
+             and inference of categorial data. 
 License: GPL-3
 RoxygenNote: 6.1.1
 Suggests: 
