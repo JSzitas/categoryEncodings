@@ -82,6 +82,10 @@ encode_categories <- function( X,
     }
   if(is.null(fact)){
     all_factor <- names(which(is_likely_factor(X) == TRUE))
+    if(length(all_factor) == ncol(X)){
+      stop("\n Factor inference impossible: inferred total number of factors: ",
+            length(all_factor), ", equal to total number of columns: ", ncol(X))
+    }
     warning("\n Inferring factors: \n ", paste(all_factor, "\n"))
   }
   else{

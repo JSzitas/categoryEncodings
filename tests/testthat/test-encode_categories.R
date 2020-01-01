@@ -154,6 +154,9 @@ test_that("Factor warnings work", {
    
 })
 
+test_that("Inferring that everything is a factor raises error", {
+  expect_error(encode_categories(design_mat_4[,6:10]))
+})
 
 
 
