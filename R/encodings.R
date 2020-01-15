@@ -231,7 +231,6 @@ encode_SPCA <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 
 encode_mnl <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 
-  .. <- NULL
   if(is.numeric(fact)){
     fact <- colnames(X)[fact]
   }
@@ -244,6 +243,8 @@ encode_mnl <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
                             coef( nnet::multinom( formula = formula(
                               paste(fact,"~.", sep = "")),
                               data = as.data.frame(X)) ) ))
+
+  
   sink()
   close(random_file)
   colnames(mnl) <-  paste( fact,"_",
@@ -303,7 +304,7 @@ encode_mnl <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 #' 
 
 encode_dummy <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
-  .. <- NULL
+
   X <- data.table::data.table(X)
   if(is.numeric(fact)){
     fact <- colnames(X)[fact]
