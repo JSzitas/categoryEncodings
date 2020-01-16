@@ -213,7 +213,7 @@ encode_SPCA <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 #' @import data.table
 #' @importFrom data.table .SD
 #' @importFrom data.table ':='
-#' @importFrom nnet multinom
+#' @importFrom glmnet glmnet
 #' @importFrom stats formula 
 #' @importFrom stats coef
 #' @export
@@ -230,33 +230,31 @@ encode_SPCA <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 #' 
 
 encode_mnl <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
-
+  
   if(is.numeric(fact)){
     fact <- colnames(X)[fact]
   }
-  reference <- matrix(rep(0,ncol(X)), nrow = 1)
-  
   X <- data.table::data.table(X)
-  random_file <- file()
-  sink(file = random_file,type = "output")
-  mnl <- data.frame( rbind( reference,
-                            coef( nnet::multinom( formula = formula(
-                              paste(fact,"~.", sep = "")),
-                              data = as.data.frame(X)) ) ))
-
   
-  sink()
-  close(random_file)
-  colnames(mnl) <-  paste( fact,"_",
-                          c("intercept",
-                            (1:(ncol(mnl)-1))),
-                          "_mnl", sep = "")
-  factor_var <- levels(as.factor(unlist(X[, .SD, .SDcols = fact])))
+  mnl <- glmnet::glmnet( x = as.matrix(X[,.SD, .SDcols = -fact]),
+                         y = unlist(X[,.SD, .SDcols = fact ]),
+                         family = "multinomial")
+  mnl <- coef(mnl, s = min(mnl$lambda), na.rm = TRUE)
+  mnl <- t(as.matrix(as.data.frame(lapply(mnl, as.matrix))))
+  mnl <- apply(mnl, MARGIN = 2, FUN = as.numeric)
+  mnl <- data.table::data.table(mnl)
 
+  colnames(mnl) <-  paste( fact,"_",
+                           c("intercept",
+                             (1:(ncol(mnl)-1))),
+                           "_mnl", sep = "")
+  
+  factor_var <- levels(as.factor(unlist(X[, .SD, .SDcols = fact])))
+  
   mnl <- cbind(factor_var,mnl)
   colnames(mnl)[1] <- fact
   mnl <- data.table::data.table(mnl)
-
+  
   if(encoding_only == TRUE){
     if(keep_factor == FALSE){
       return(mnl[,-1])
@@ -272,6 +270,7 @@ encode_mnl <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
   }
   return(X)
 }
+
 
 #' Encode a given factor variable using dummy variables
 #'
@@ -473,5 +472,147 @@ encode_median <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
   return(X)
 }
 
+#' Encode a given factor variable using difference encoding
+#'
+#' @description Transforms the original design matrix using a difference encoding.
+#'
+#' @param X The data.frame/data.table to transform. 
+#' @param fact The factor variable to encode by - either a positive integer specifying the 
+#'             column number, or the name of the column.
+#' @param keep_factor Whether to keep the original factor column(defaults to **FALSE**).
+#' @param encoding_only Whether to return the full transformed dataset or only the new 
+#'                      columns. Defaults to FALSE and returns the full dataset.
+#'                      
+#' @return A new data.table X which contains the new columns and optionally the old factor.
+#' 
+#' @import data.table
+#' @importFrom data.table .SD
+#' @importFrom data.table ':='
+#' @export
+#'
+#' @examples
+#' 
+#' design_mat <- cbind( data.frame( matrix(rnorm(5*100),ncol = 5) ),
+#'                      sample( sample(letters, 10), 100, replace = TRUE)
+#'                      )
+#' colnames(design_mat)[6] <- "factor_var"
+#' 
+#' encode_difference(X = design_mat, fact = "factor_var", keep_factor = FALSE)
+#' 
 
+
+
+encode_difference <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
+  
+  if(is.numeric(fact)){
+    fact <- colnames(X)[fact]
+  }
+  
+  X <- data.table::data.table(X)
+  
+  length_diff <- length(levels(as.factor(unlist(X[, .SD, .SDcols = fact]))))
+  
+  diff <- matrix(-1 / (col(matrix(0,length_diff, length_diff)) + 1),
+                 length_diff, length_diff)
+  
+  diff[lower.tri(diff)] <- 0
+  diff <- diff[, 1:(length_diff - 1)]
+  diff[row(diff) == (col(diff) + 1)] <- - apply(diff, 2, sum)
+  diff <- data.table::data.table(diff)
+  
+  colnames(diff) <-  paste( fact,"_",
+                            c((1:(ncol(diff)))),
+                            "_diff", sep = "")
+  factor_var <- levels(as.factor(unlist(X[, .SD, .SDcols = fact])))
+  
+  diff <- cbind( factor_var, diff )
+  colnames(diff)[1] <- fact
+  diff <- data.table::data.table(diff)
+  
+  if(encoding_only == TRUE){
+    if(keep_factor == FALSE){
+      return(diff[,-1])
+    }
+    else{
+      return(diff)  
+    }
+  }
+  X <- X[diff, on = fact]
+  
+  if(keep_factor == FALSE){
+    X[,(fact) := NULL]
+  }
+  return(X)
+}
+
+
+#' Encode a given factor variable using helmert encoding
+#'
+#' @description Transforms the original design matrix using a helmert 
+#' (reverse difference) encoding.
+#'
+#' @param X The data.frame/data.table to transform. 
+#' @param fact The factor variable to encode by - either a positive integer specifying the 
+#'             column number, or the name of the column.
+#' @param keep_factor Whether to keep the original factor column(defaults to **FALSE**).
+#' @param encoding_only Whether to return the full transformed dataset or only the new 
+#'                      columns. Defaults to FALSE and returns the full dataset.
+#'                      
+#' @return A new data.table X which contains the new columns and optionally the old factor.
+#' 
+#' @import data.table
+#' @importFrom data.table .SD
+#' @importFrom data.table ':='
+#' @export
+#'
+#' @examples
+#' 
+#' design_mat <- cbind( data.frame( matrix(rnorm(5*100),ncol = 5) ),
+#'                      sample( sample(letters, 10), 100, replace = TRUE)
+#'                      )
+#' colnames(design_mat)[6] <- "factor_var"
+#' 
+#' encode_helmert(X = design_mat, fact = "factor_var", keep_factor = FALSE)
+#' 
+
+encode_helmert <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
+  
+  if(is.numeric(fact)){
+    fact <- colnames(X)[fact]
+  }
+  
+  X <- data.table::data.table(X)
+  
+  length_helm <- length(levels(as.factor(unlist(X[, .SD, .SDcols = fact]))))
+  helm <- diag(1:length_helm ) - 1
+  helm[lower.tri(helm)] <- 0
+  helm <- helm/rep( 1:length_helm,
+                    each = length_helm )
+  helm <- data.table::data.table(helm[,-1])
+  
+  
+  colnames(helm) <-  paste( fact,"_",
+                            c((1:(ncol(helm)))),
+                            "_helm", sep = "")
+  factor_var <- levels(as.factor(unlist(X[, .SD, .SDcols = fact])))
+  
+  helm <- cbind( factor_var, helm )
+  colnames(helm)[1] <- fact
+  helm <- data.table::data.table(helm)
+  
+  if(encoding_only == TRUE){
+    if(keep_factor == FALSE){
+      return(helm[,-1])
+    }
+    else{
+      return(helm)  
+    }
+  }
+  X <- X[helm, on = fact]
+  
+  if(keep_factor == FALSE){
+    X[,(fact) := NULL]
+  }
+  return(X)
+}
 

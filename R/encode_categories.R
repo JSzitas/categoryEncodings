@@ -19,6 +19,8 @@
 #'               * "SPCA"
 #'               * "mnl"
 #'               * "dummy"
+#'               * "difference"
+#'               * "helmert" 
 #' If only a single method is specified, it is taken to encode either all of the variables 
 #' supplied through *fact*, or variables which have been flagged as factors automatically. 
 #' If multiple methods are specified, the number of methods must match the number of 
@@ -97,11 +99,11 @@ encode_categories <- function( X,
 
   method_table <- list( encode_mean, encode_median, encode_deviation,
                         encode_lowrank, encode_SPCA, encode_mnl,
-                        encode_dummy )
+                        encode_dummy, encode_difference, encode_helmert )
 
   method_names <- c( "mean", "median", "deviation",
                      "lowrank", "SPCA", "mnl",
-                     "dummy")
+                     "dummy", "difference", "helmert")
   if(!is.null(method))
   {
     methods_used <- lapply( method, FUN = match, table = method_names)

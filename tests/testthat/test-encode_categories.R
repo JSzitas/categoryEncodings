@@ -63,7 +63,20 @@ test_that("Automatic encoding works with specified methods", {
       encode_categories(design_mat_1, method = "mnl"))
    
    expect_equal(ncol(result), 11)
-   expect_equal(result, encode_mnl(design_mat_1, fact = 6))
+   expect_equal(result, suppressWarnings(
+      encode_mnl(design_mat_1, fact = 6)))
+   
+   result <- suppressWarnings(
+      encode_categories(design_mat_1, method = "difference"))
+   
+   expect_equal(ncol(result), 14)
+   expect_equal(result, encode_difference(design_mat_1, fact = 6))
+   
+   result <- suppressWarnings(
+      encode_categories(design_mat_1, method = "helmert"))
+   
+   expect_equal(ncol(result), 14)
+   expect_equal(result, encode_helmert(design_mat_1, fact = 6))
 })
 
 test_that("Automatic encoding works with factor specification", {

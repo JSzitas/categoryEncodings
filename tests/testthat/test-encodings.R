@@ -48,13 +48,14 @@ test_that("Median encoding works", {
 })
 
 test_that("Mnl encoding works", {
-  new_mat <- encode_mnl(design_mat, "factor_var")
+  new_mat <- suppressWarnings(encode_mnl(design_mat, "factor_var"))
   
   expect_equal(ncol(new_mat), 11)
   expect_equal(nrow(new_mat), 100)
-  expect_equal(sum(apply(new_mat,2, is.numeric)), 11)
+  expect_equal(sum(unlist(lapply(new_mat, is.numeric))), 11)
   
-  new_mat <- encode_mnl(design_mat, "factor_var", keep_factor = TRUE)
+  new_mat <- suppressWarnings( encode_mnl(design_mat, "factor_var",
+                                          keep_factor = TRUE))
   
   expect_equal(ncol(new_mat), 12)
   expect_equal(nrow(new_mat), 100)
@@ -91,6 +92,34 @@ test_that("Deviation encoding works", {
 })
 
 
+test_that("Difference encoding works", {
+  new_mat <- encode_difference(design_mat, "factor_var")
+  
+  expect_equal(ncol(new_mat), 14)
+  expect_equal(nrow(new_mat), 100)
+  expect_equal(sum(unlist(lapply(new_mat, is.numeric))), 14)
+  
+  new_mat <- encode_difference(design_mat, "factor_var", keep_factor = TRUE)
+  
+  expect_equal(ncol(new_mat), 15)
+  expect_equal(nrow(new_mat), 100)
+  expect_equal(sum(unlist(lapply(new_mat, is.numeric))), 14)
+})
+
+
+test_that("Helmert encoding works", {
+  new_mat <- encode_helmert(design_mat, "factor_var")
+  
+  expect_equal(ncol(new_mat), 14)
+  expect_equal(nrow(new_mat), 100)
+  expect_equal(sum(apply(new_mat,2, is.numeric)), 14)
+  
+  new_mat <- encode_helmert(design_mat, "factor_var", keep_factor = TRUE)
+  
+  expect_equal(ncol(new_mat), 15)
+  expect_equal(nrow(new_mat), 100)
+  expect_equal(sum(unlist(lapply(new_mat, is.numeric))), 14)
+})
 
 
 
