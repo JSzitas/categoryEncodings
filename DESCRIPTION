@@ -1,7 +1,7 @@
 Package: categoryEncodings
 Type: Package
 Title: Category Variable Encodings
-Version: 1.1.0.7000
+Version: 1.2.0.7000
 Encoding: UTF-8
 Date: 2019-12-20
 Authors@R: 
@@ -18,6 +18,6 @@ RoxygenNote: 6.1.1
 Suggests: 
     testthat (>= 2.1.0),
     covr
-Imports: nnet,
+Imports: glmnet,
          sparsepca,
          data.table
