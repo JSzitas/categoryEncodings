@@ -1,7 +1,7 @@
 Package: categoryEncodings
 Type: Package
 Title: Category Variable Encodings
-Version: 1.2.0.7000
+Version: 1.4.2.1000
 Encoding: UTF-8
 Date: 2019-12-20
 Authors@R: 

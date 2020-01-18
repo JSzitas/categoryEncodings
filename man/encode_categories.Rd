@@ -30,6 +30,8 @@ the variables converted.}
               * "dummy"
               * "difference"
               * "helmert" 
+              * "simple_effect"
+              * "repeated_effect"
 If only a single method is specified, it is taken to encode either all of the variables 
 supplied through *fact*, or variables which have been flagged as factors automatically. 
 If multiple methods are specified, the number of methods must match the number of 

@@ -77,6 +77,19 @@ test_that("Automatic encoding works with specified methods", {
    
    expect_equal(ncol(result), 14)
    expect_equal(result, encode_helmert(design_mat_1, fact = 6))
+   
+   
+   result <- suppressWarnings(
+      encode_categories(design_mat_1, method = "simple_effect"))
+   
+   expect_equal(ncol(result), 14)
+   expect_equal(result, encode_simple_effect(design_mat_1, fact = 6))
+   
+   result <- suppressWarnings(
+      encode_categories(design_mat_1, method = "repeated_effect"))
+   
+   expect_equal(ncol(result), 14)
+   expect_equal(result, encode_repeated_effect(design_mat_1, fact = 6))
 })
 
 test_that("Automatic encoding works with factor specification", {
