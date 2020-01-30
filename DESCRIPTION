@@ -3,13 +3,13 @@ Type: Package
 Title: Category Variable Encodings
 Version: 1.4.2.1000
 Encoding: UTF-8
-Date: 2019-12-20
+Date: 2020-1-30
 Authors@R: 
     person(given = "Juraj",
            family = "Szitas",
            role = c("aut", "cre"),
            email = "szitas.juraj13@gmail.com")
-BugReports: https://github.com/JSzitas/postDoubleR/issues          
+BugReports: https://github.com/JSzitas/categoryEncodings/issues          
 Description: Simple fast encodings for category data using 
              a data.table backend. Supports automatic conversion 
              and inference of categorial data. 
@@ -18,6 +18,7 @@ RoxygenNote: 6.1.1
 Suggests: 
     testthat (>= 2.1.0),
     covr
+URL: https://github.com/JSzitas/categoryEncodings
 Imports: glmnet,
          sparsepca,
          data.table

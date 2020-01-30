@@ -75,3 +75,8 @@ colnames(data_fm)[6:10] <- c( "few_letters",  "many_letters",
 
  
 ````
+
+
+## Contributing
+
+If you would like to contribute a pull request, please do contribute! All contributions will be considered for acceptance, provided they are justifiable and the code is reasonable, regardless of anything related to the person submitting the pull request. Please keep things civil - there is no need for negativity. Also, please do refrain from adding unnecessary dependencies (*Ex:* pipe) to the package (such pull requests as would add an unnecessary dependencies will be denied/ suspended until the code can be made dependency free).
