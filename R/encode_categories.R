@@ -37,8 +37,9 @@
 #'          'Sufficient Representations for Categorical Variables', and 
 #'          a simple heuristic - where 
 #'          
-#' @import data.table
+#' @importFrom data.table data.table
 #' @importFrom data.table .SD
+#' @importFrom data.table ':='
 #' @export
 #' 
 #' @examples

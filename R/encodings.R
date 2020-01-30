@@ -12,7 +12,10 @@
 #' @return A new data.table X which contains the new columns and optionally the old factor.
 #' @details Uses the method from Johannemann et al.(2019) 
 #' 'Sufficient Representations for Categorical Variables' - Means Encoding.
-#' @import data.table
+#' @importFrom data.table data.table
+#' @importFrom data.table setkeyv
+#' @importFrom data.table .SD
+#' @importFrom data.table ':='
 #' @export
 #' 
 #' @examples
@@ -78,7 +81,8 @@ encode_mean <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE ){
 #' @return A new data.table X which contains the new columns and optionally the old factor.
 #' @details Uses the method from Johannemann et al.(2019) 
 #' 'Sufficient Representations for Categorical Variables' - Low rank.
-#' @import data.table
+#' @importFrom data.table data.table
+#' @importFrom data.table setkeyv
 #' @importFrom data.table .SD
 #' @importFrom data.table ':='
 #' @export
@@ -143,7 +147,8 @@ encode_lowrank <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE)
 #' @return A new data.table X which contains the new columns and optionally the old factor.
 #' @details Uses the method from Johannemann et al.(2019) 
 #' 'Sufficient Representations for Categorical Variables' - sPCA.
-#' @import data.table
+#' @importFrom data.table data.table
+#' @importFrom data.table setkeyv
 #' @importFrom data.table .SD
 #' @importFrom data.table ':='
 #' @importFrom sparsepca spca
@@ -210,7 +215,8 @@ encode_SPCA <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 #' @return A new data.table X which contains the new columns and optionally the old factor.
 #' @details Uses the method from Johannemann et al.(2019) 
 #' 'Sufficient Representations for Categorical Variables' - mnl.
-#' @import data.table
+#' @importFrom data.table data.table
+#' @importFrom data.table setkeyv
 #' @importFrom data.table .SD
 #' @importFrom data.table ':='
 #' @importFrom glmnet glmnet
@@ -286,7 +292,8 @@ encode_mnl <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 #' @return A new data.table X which contains the new columns and optionally the old factor.
 #' @details The basic dummy variable encoding, with reference class level set to 0. 
 #' The reference class is always the first class observed. 
-#' @import data.table
+#' @importFrom data.table data.table
+#' @importFrom data.table setkeyv
 #' @importFrom data.table .SD
 #' @importFrom data.table ':='
 #' @export
@@ -354,7 +361,8 @@ encode_dummy <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 #' @return A new data.table X which contains the new columns and optionally the old factor.
 #' @details The deviation dummy variable encoding, with reference class level set to -1. 
 #' The reference class is always the last class observed. 
-#' @import data.table
+#' @importFrom data.table data.table
+#' @importFrom data.table setkeyv
 #' @importFrom data.table .SD
 #' @importFrom data.table ':='
 #' @export
@@ -426,7 +434,8 @@ encode_deviation <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE
 #' @details This might be somewhat lacking in theory (to the author's best knowledge), but 
 #' feel free to try it and publish the results if they turn out interesting on some 
 #' particular problem. 
-#' @import data.table
+#' @importFrom data.table data.table
+#' @importFrom data.table setkeyv
 #' @importFrom data.table .SD
 #' @importFrom data.table ':='
 #' @importFrom stats median 
@@ -485,7 +494,8 @@ encode_median <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 #'                      
 #' @return A new data.table X which contains the new columns and optionally the old factor.
 #' 
-#' @import data.table
+#' @importFrom data.table data.table
+#' @importFrom data.table setkeyv
 #' @importFrom data.table .SD
 #' @importFrom data.table ':='
 #' @export
@@ -499,8 +509,6 @@ encode_median <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 #' 
 #' encode_difference(X = design_mat, fact = "factor_var", keep_factor = FALSE)
 #' 
-
-
 
 encode_difference <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
   
@@ -560,7 +568,8 @@ encode_difference <- function(X, fact, keep_factor = FALSE, encoding_only = FALS
 #'                      
 #' @return A new data.table X which contains the new columns and optionally the old factor.
 #' 
-#' @import data.table
+#' @importFrom data.table data.table
+#' @importFrom data.table setkeyv
 #' @importFrom data.table .SD
 #' @importFrom data.table ':='
 #' @export
@@ -629,7 +638,8 @@ encode_helmert <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
 #'                      
 #' @return A new data.table X which contains the new columns and optionally the old factor.
 #' 
-#' @import data.table
+#' @importFrom data.table data.table
+#' @importFrom data.table setkeyv
 #' @importFrom data.table .SD
 #' @importFrom data.table ':='
 #' @export
@@ -696,7 +706,8 @@ encode_simple_effect <- function(X, fact, keep_factor = FALSE, encoding_only = F
 #'                      
 #' @return A new data.table X which contains the new columns and optionally the old factor.
 #' 
-#' @import data.table
+#' @importFrom data.table data.table
+#' @importFrom data.table setkeyv
 #' @importFrom data.table .SD
 #' @importFrom data.table ':='
 #' @export

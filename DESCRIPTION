@@ -1,8 +1,8 @@
 Package: categoryEncodings
 Type: Package
 Title: Category Variable Encodings
-Version: 1.4.2.1000
 Encoding: UTF-8
+Version: 1.4.3
 Date: 2020-1-30
 Authors@R: 
     person(given = "Juraj",
@@ -10,9 +10,11 @@ Authors@R:
            role = c("aut", "cre"),
            email = "szitas.juraj13@gmail.com")
 BugReports: https://github.com/JSzitas/categoryEncodings/issues          
-Description: Simple fast encodings for category data using 
-             a data.table backend. Supports automatic conversion 
-             and inference of categorial data. 
+Description: Simple, fast, and automatic encodings for category data using 
+             a data.table backend. Most of the methods are an implementation 
+             of Johannemann, Hadad, Athey, Wager (2019) <arXiv:1908.09874>,
+             particularly their 'means', "sPCA", "low-rank" and
+             "multinomial logit".
 License: GPL-3
 RoxygenNote: 6.1.1
 Suggests: 
