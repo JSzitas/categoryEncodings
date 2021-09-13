@@ -5,8 +5,7 @@
 
 <!-- badges: start -->
 
-[![Travis build
-status](https://travis-ci.org/JSzitas/categoryEncodings.svg?branch=master)](https://travis-ci.org/JSzitas/categoryEncodings)
+[![R-CMD-check](https://github.com/JSzitas/categoryEncodings/workflows/R-CMD-check/badge.svg)](https://github.com/JSzitas/categoryEncodings/actions)
 [![AppVeyor build
 status](https://ci.appveyor.com/api/projects/status/github/JSzitas/categoryEncodings?branch=master&svg=true)](https://ci.appveyor.com/project/JSzitas/categoryEncodings)
 [![Codecov test
@@ -46,6 +45,10 @@ accepted.
 
 Here we want to encode all of the factors in a given data.frame.
 
+**OLD EXAMPLE USAGE, THE DEFAULT ENCODING FUNCTION HAS CHANGED (TO
+PROVIDE EASIER RE-ENCODING OF NEW DATA) AS OF VERSION &gt;= 1.5, NEW
+EXAMPLES COMING SOON**
+
 ``` r
 library(categoryEncodings)
 # currently 
@@ -69,25 +72,25 @@ data_fm <- cbind( data.frame(
 colnames(data_fm)[6:10] <- c( "few_letters",  "many_letters",
                               "some_numbers", "many_numbers",
                               "binary" ) 
-# it does not matter how many factor variables they are, whether they are encoded as factors
+# it does not matter how many factor variables there are, whether they are encoded as factors
 # and whether you supply a method to encode them by - some simple inference of factors is done
 # based on the number of distinct values in every variable - over a certain threshold 
-# a variable is deemed as essentialy a factor, and treated as such for conversion 
+# a variable is deemed as essentially a factor, and treated as such for conversion 
 # you will be notified of which variables are being converted via a warning
     
-    result <- encode_categories(data_fm)
-    print(result)
+result <- encode_categories(data_fm)
+print(result)
 
  
 ```
 
 ## Contributing
 
-If you would like to contribute a pull request, please do contribute\!
-All contributions will be considered for acceptance, provided they are
-justifiable and the code is reasonable, regardless of anything related
-to the person submitting the pull request. Please keep things civil -
-there is no need for negativity. Also, please do refrain from adding
-unnecessary dependencies (*Ex:* pipe) to the package (such pull requests
-as would add an unnecessary dependencies will be denied/ suspended until
-the code can be made dependency free).
+Please do contribute to the projects, all contributions are welcome, as
+long as people keep things civil - there is no need for negativity,
+hatred, and rudeness. Also, please do refrain from adding unnecessary
+dependencies (*Ex:* pipe) to the package (such pull requests as would
+add an unnecessary dependency will be denied/ suspended until the code
+can be made dependency free). This package wants to be as lightweight as
+possible - even if this means the code is a bit harder to write and
+maintain.
