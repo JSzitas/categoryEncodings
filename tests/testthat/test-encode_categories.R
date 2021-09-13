@@ -54,10 +54,10 @@ test_that("Automatic encoding works with specified methods", {
    expect_equal(result, encode_lowrank(design_mat_1, fact = 6))
    
    result <- suppressWarnings(
-      encode_categories(design_mat_1, method = "SPCA"))
+      encode_categories(design_mat_1, method = "spca"))
    
    expect_equal(ncol(result), 10)
-   expect_equal(result, encode_SPCA(design_mat_1, fact = 6))
+   expect_equal(result, encode_spca(design_mat_1, fact = 6))
    
    result <- suppressWarnings(
       encode_categories(design_mat_1, method = "mnl"))
@@ -97,12 +97,12 @@ test_that("Automatic encoding works with factor specification", {
    result <- encode_categories(design_mat_1, fact = 6)
    
    expect_equal(ncol(result), 10)
-   expect_equal(result, encode_SPCA(design_mat_1, fact = 6))
+   expect_equal(result, encode_spca(design_mat_1, fact = 6))
    
    result <- encode_categories(design_mat_1, fact = 6)
    
    expect_equal(ncol(result), 10)
-   expect_equal(result, encode_SPCA(design_mat_1, fact = 6))
+   expect_equal(result, encode_spca(design_mat_1, fact = 6))
    
 })
 
@@ -128,7 +128,7 @@ test_that("Automatic encoding works without method specification", {
       encode_categories(design_mat_1))
    
    expect_equal(ncol(result), 10)
-   expect_equal(result, encode_SPCA(design_mat_1, fact = "few_letters"))
+   expect_equal(result, encode_spca(design_mat_1, fact = "few_letters"))
    
 })
 
@@ -136,24 +136,22 @@ test_that("Warnings/Errors work", {
    
    expect_error( encode_categories(design_mat_1, fact = "few_letters",
                                     method = c("means","median")),
-                 "Failed to match the supplied method(s).",
+                 "Failed to match method(s): means",
                  fixed = TRUE)
    
    too_few_methods <- paste("The number of supplied methods(", 2,
          ") is not equal to the number of factors(", 5,").", 
          "Please specify the correct number of methods, and/or factor variables.",
          sep = "")
-   too_many_methods <- paste("More methods(", 2,") than factors
-  (", 1,") detected, using only the first few, 
-           until there is enough methods for the number of factor variables, 
-           and dropping the rest.", sep = "")
+   too_many_methods <- paste("More methods(", 2,") than factors (",
+                             1,") detected.", sep = "")
    
    expect_error( suppressWarnings(
       encode_categories( design_mat_4, method = c("mean","median"))),
                  too_few_methods,
                  fixed = TRUE )
    
-   expect_warning( encode_categories(design_mat_1, fact = "few_letters",
+   expect_error( encode_categories(design_mat_1, fact = "few_letters",
                                    method = c("mean","median")),
                    too_many_methods,
                    fixed = TRUE )
