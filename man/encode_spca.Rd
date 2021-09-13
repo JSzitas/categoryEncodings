@@ -34,6 +34,6 @@ design_mat <- cbind( data.frame( matrix(rnorm(5*100),ncol = 5) ),
                      )
 colnames(design_mat)[6] <- "factor_var"
 
-#encode_SPCA(X = design_mat, fact = "factor_var", keep_factor = FALSE)
+encode_spca(X = design_mat, fact = "factor_var", keep_factor = FALSE)
 
 }

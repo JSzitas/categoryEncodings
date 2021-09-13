@@ -48,6 +48,8 @@ If left empty, the appriopriate method is selected on a case by case basis
 
 \item{custom_encoding_assignment}{**experimental** A function which takes two arguments (**X** and **fact**) denoting 
 the data and the factors, respectivelly, and assigns a valid encoding **method** to each factor in **fact**.}
+
+\item{...}{Not implemented.}
 }
 \value{
 A new data.table X which contains the new columns and optionally the old factor(s).
