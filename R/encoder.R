@@ -32,6 +32,7 @@
 #' (and the selected methods are written out to console).
 #' @param custom_encoding_assignment **experimental** A function which takes two arguments (**X** and **fact**) denoting 
 #' the data and the factors, respectivelly, and assigns a valid encoding **method** to each factor in **fact**. 
+#' @param ... Not implemented.
 #' @return A new data.table X which contains the new columns and optionally the old factor(s).
 #' @details Automatically selects the appropriate method given the number of anticipated
 #'          newly created variables, based on the results in Johannemann et al.(2019)
@@ -52,6 +53,7 @@ encoder <- function( X, Y = NULL, fact = NULL, method = NULL, custom_encoding_as
   Y <- x_y_list[["Y"]]
   # find factors if necessary
   factors <- handle_factors( X, fact )
+  validate_data( X, factors )
   # get relevant encodings
   assigned_encodings <- assign_encodings( X, factors, method, custom_encoding_assignment )
   result <- fit_encoder( X, assigned_encodings )

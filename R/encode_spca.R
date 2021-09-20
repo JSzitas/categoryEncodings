@@ -8,7 +8,7 @@
 #' @param keep_factor Whether to keep the original factor column(defaults to **FALSE**).
 #' @param encoding_only Whether to return the full transformed dataset or only the new 
 #'                      columns. Defaults to FALSE and returns the full dataset.  
-#'                      
+#' @param ... Additional parameters to pass to \code{\link[sparsepca]{spca}}.                      
 #' @return A new data.table X which contains the new columns and optionally the old factor.
 #' @details Uses the method from Johannemann et al.(2019) 
 #' 'Sufficient Representations for Categorical Variables' - sPCA.
@@ -26,9 +26,9 @@
 #'                      )
 #' colnames(design_mat)[6] <- "factor_var"
 #' 
-#' #encode_SPCA(X = design_mat, fact = "factor_var", keep_factor = FALSE)
+#' encode_spca(X = design_mat, fact = "factor_var", keep_factor = FALSE)
 #' 
-encode_spca <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
+encode_spca <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE, ...){
   
   if(is.numeric(fact)){
     fact <- colnames(X)[fact]
@@ -37,9 +37,11 @@ encode_spca <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
   data.table::setkeyv(X, fact)
   means <- X[, lapply(.SD, mean, na.rm = TRUE), by = fact ]
   
-  SPCA <- sparsepca::spca(means[,2:ncol(means)], verbose = FALSE)
-  
-  PCAs <- cbind(means[,1], SPCA[["scores"]])
+  SPCA <- sparsepca::spca(means[,2:ncol(means)], ..., verbose = FALSE)
+  SPCA <- SPCA[["scores"]]
+  SPCA <- SPCA[, apply( SPCA, 2, function(i){ ifelse(all(i == 0), FALSE, TRUE) } )]
+
+  PCAs <- cbind(means[,1], SPCA )
   colnames(PCAs) <- c( fact ,
                        paste( fact, "_",
                               (1:(ncol(PCAs)-1)),

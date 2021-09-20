@@ -5,9 +5,8 @@ fit_encoder <- function( X, encodings ) {
   # get the numeric columns not used for encoding
   non_encoding_columns <- setdiff( colnames(X), encoding_names)
   
-  result <- lapply( encoding_names,
+  recorded_encodings <- lapply( encoding_names,
                     FUN = function(factor) {
-                      selection <- c(non_encoding_columns, factor)
                       do.call(
                         what = encodings[[factor]],
                         args = list(
@@ -21,10 +20,10 @@ fit_encoder <- function( X, encodings ) {
   
   encoder_fit <- function( X, keep = FALSE ) {
     X <- to_data_table(X)
-    res <- X[result[[1]], on = encoding_names[1]]
+    res <- X[recorded_encodings[[1]], on = encoding_names[1]]
     if (length(encoding_names) > 1) {
       for (i in 2:length(encoding_names)) {
-        res <- res[result[[i]], on = encoding_names[i]]
+        res <- res[recorded_encodings[[i]], on = encoding_names[i]]
       }
     }
     if (keep == FALSE) {

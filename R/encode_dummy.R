@@ -8,7 +8,9 @@
 #' @param keep_factor Whether to keep the original factor column(defaults to **FALSE**).
 #' @param encoding_only Whether to return the full transformed dataset or only the new 
 #'                      columns. Defaults to FALSE and returns the full dataset.
-#'                      
+#' @param use_reference Whether to include a reference level (i.e. whether the new encoding contains an **intercept-like** constant term). 
+#' Defaults to **TRUE**.
+#' @param reference_value What the reference value should be if **use_reference** is set to **TRUE**. Defaults to 0.                      
 #' @return A new data.table X which contains the new columns and optionally the old factor.
 #' @details The basic dummy variable encoding, with reference class level set to 0. 
 #' The reference class is always the first class observed. 
@@ -27,7 +29,7 @@
 #' 
 #' encode_dummy(X = design_mat, fact = "factor_var", keep_factor = FALSE)
 #' 
-encode_dummy <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
+encode_dummy <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE, use_reference = TRUE, reference_value = 0){
   
   X <- data.table::data.table(X)
   if(is.numeric(fact)){
@@ -36,9 +38,14 @@ encode_dummy <- function(X, fact, keep_factor = FALSE, encoding_only = FALSE){
   
   factor_var <- levels(as.factor(unlist(X[, .SD, .SDcols = fact])))
   
-  reference <- rep(0, length(factor_var)-1)
+  dummies <- diag(length(factor_var)-1)
   
-  dummies <- data.frame(rbind(reference, diag(length(factor_var)-1)))
+  if( use_reference )
+  {
+    reference <- rep(reference_value, length(factor_var)-1)
+    dummies <- data.frame(rbind(reference, dummies))
+  }
+
   colnames(dummies) <- paste( fact,"_",
                               factor_var[2:length(factor_var)],
                               "_dummy" , sep = "")

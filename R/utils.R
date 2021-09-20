@@ -23,6 +23,9 @@ handle_y <- function( X, Y ) {
     Y_ <- X[, .SD, .SDcols = Y]
     X <- X[, .SD, .SDcols = !Y]
   }
+  else {
+    Y_ <- NULL
+  }
   return(list( X = X, Y = Y_))
 }
 
