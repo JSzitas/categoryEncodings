@@ -2,7 +2,7 @@ Package: categoryEncodings
 Type: Package
 Title: Category Variable Encodings
 Encoding: UTF-8
-Version: 1.4.3
+Version: 1.5.0
 Date: 2020-1-30
 Authors@R: 
     person(given = "Juraj",
@@ -16,10 +16,11 @@ Description: Simple, fast, and automatic encodings for category data using
              particularly their 'means', "sPCA", "low-rank" and
              "multinomial logit".
 License: GPL-3
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.2
 Suggests: 
     testthat (>= 2.1.0),
-    covr
+    covr,
+    tibble
 URL: https://github.com/JSzitas/categoryEncodings
 Imports: glmnet,
          sparsepca,
