@@ -4,7 +4,14 @@
 \alias{encode_dummy}
 \title{Encode a given factor variable using dummy variables}
 \usage{
-encode_dummy(X, fact, keep_factor = FALSE, encoding_only = FALSE)
+encode_dummy(
+  X,
+  fact,
+  keep_factor = FALSE,
+  encoding_only = FALSE,
+  use_reference = TRUE,
+  reference_value = 0
+)
 }
 \arguments{
 \item{X}{The data.frame/data.table to transform.}
@@ -16,6 +23,11 @@ column number, or the name of the column.}
 
 \item{encoding_only}{Whether to return the full transformed dataset or only the new 
 columns. Defaults to FALSE and returns the full dataset.}
+
+\item{use_reference}{Whether to include a reference level (i.e. whether the new encoding contains an **intercept-like** constant term). 
+Defaults to **TRUE**.}
+
+\item{reference_value}{What the reference value should be if **use_reference** is set to **TRUE**. Defaults to 0.}
 }
 \value{
 A new data.table X which contains the new columns and optionally the old factor.
