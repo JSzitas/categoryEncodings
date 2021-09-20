@@ -4,7 +4,7 @@
 \alias{encode_spca}
 \title{Encode a given factor variable using a sparse PCA representation}
 \usage{
-encode_spca(X, fact, keep_factor = FALSE, encoding_only = FALSE)
+encode_spca(X, fact, keep_factor = FALSE, encoding_only = FALSE, ...)
 }
 \arguments{
 \item{X}{The data.frame/data.table to transform.}
@@ -16,6 +16,8 @@ column number, or the name of the column.}
 
 \item{encoding_only}{Whether to return the full transformed dataset or only the new 
 columns. Defaults to FALSE and returns the full dataset.}
+
+\item{...}{Additional parameters to pass to \code{\link[sparsepca]{spca}}.}
 }
 \value{
 A new data.table X which contains the new columns and optionally the old factor.
