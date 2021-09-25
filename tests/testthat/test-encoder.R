@@ -27,9 +27,22 @@ result_head <- structure(list(
   -1L
 ), class = c("data.table", "data.frame"))
 
-test_that("Testing that encoder works", {
+test_that("Test that encoder works", {
   expect_warning(encoder(X = df))
 
   result <- suppressWarnings(encoder(X = df))
   expect_equal(result_head, result[["encoded"]][1, ])
 })
+
+test_that("Test that inverting the encoding works", {
+
+  result <- suppressWarnings(encoder(X = df))
+  maybe_original <- result$fitted_deencoder(result$encoded)
+  # the attributes can differ - we do not care too much as long as the values make sense
+  expect_true( all.equal( data.table::setorder(df),
+                          data.table::setorder(maybe_original),
+                          check.attributes = FALSE )
+               )
+})
+
+

@@ -53,23 +53,27 @@ result_head_2 <- structure(list(y = c(
 test_that("Fitting an encoder works", {
   encoder_1 <- fit_encoder(X = dt, enc_1)
 
-  expect_equal(length(encoder_1), 2)
+  expect_equal(length(encoder_1), 3)
   expect_type(encoder_1, "list")
   expect_equal(names(encoder_1), c(
     "encoded",
-    "fitted_encoder"
+    "fitted_encoder",
+    "fitted_deencoder"
   ))
   expect_true(is.function(encoder_1$fitted_encoder))
+  expect_true(is.function(encoder_1$fitted_deencoder))
   expect_equal(result_head_1, head(encoder_1$encoded))
 
   encoder_2 <- fit_encoder(X = dt, enc_2)
 
-  expect_equal(length(encoder_2), 2)
+  expect_equal(length(encoder_2), 3)
   expect_type(encoder_2, "list")
   expect_equal(names(encoder_2), c(
     "encoded",
-    "fitted_encoder"
+    "fitted_encoder",
+    "fitted_deencoder"
   ))
   expect_true(is.function(encoder_2$fitted_encoder))
+  expect_true(is.function(encoder_2$fitted_deencoder))
   expect_equal(result_head_2, head(encoder_2$encoded))
 })
