@@ -34,17 +34,14 @@ You can install the latest version of **categoryEncodings** from [github](https:
 devtools::install_github("JSzitas/categoryEncodings")
 ```
 
-Soon the package will be submitted to **CRAN**, and hopefully will be accepted. 
-
+**NOTE:** The latest stable version available from **CRAN** contains features deprecated in the current development version - I hope to resolve this soon, and publish the development version. 
 
 ## Example 
 
 Here we want to encode all of the factors in a given data.frame.
 
-
 ````{r, message = FALSE, eval = TRUE}
 library(categoryEncodings)
-
 # create some example data
 data_fm <- cbind( data.frame( 
    matrix( rnorm(5*100),ncol = 5)),
@@ -65,12 +62,10 @@ result <- encoder(data_fm)
 # note that due to the data.table back-end, the result has to be saved to an object to be 
 # visible: otherwise printing is suppressed.   
 head(result$encoded)
- 
 ````
 
 We also recover a **function closure** which we can reuse to fit new data, as long as it conforms to the same format: 
 ```{r}
-
 # to fit to any dataset you can either call it directly - it is a single argument function
 data_fm_encoded <- result$fitted_encoder(data_fm)
 
@@ -81,7 +76,6 @@ encoding_function <- result$fitted_encoder
 You also get a **"de-encoding"** function - 
 ```{r}
 deencoder <- result$fitted_deencoder
-new_data_fm <- deencoder( result$encoded ) 
 ```
 
 This undoes the "encoding", effectively returning the original data. This can be quite useful for interpretability methods, where the 
@@ -89,12 +83,12 @@ interpretation becomes easier for un-encoded data.
 Note that this sadly does not maintain the order of the data from the original - and some attributes may be lost. Nonetheless, the recovered data is almost the same, and equivalent for all practical purposes: 
 
 ```{r}
-
 original <- data.table::data.table(data_fm)
-unencoded <- new_data_fm 
+deencoded <- deencoder( result$encoded ) 
+
 
 all.equal( data.table::setorder(original), 
-           data.table::setorder(unencoded), 
+           data.table::setorder(deencoded), 
            check.attributes = FALSE )
 ```
 
