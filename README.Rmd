@@ -41,21 +41,11 @@ Soon the package will be submitted to **CRAN**, and hopefully will be accepted.
 
 Here we want to encode all of the factors in a given data.frame.
 
-**OLD EXAMPLE USAGE, THE DEFAULT ENCODING FUNCTION HAS CHANGED (TO PROVIDE EASIER RE-ENCODING OF NEW DATA) AS OF VERSION >= 1.5, NEW EXAMPLES COMING SOON**
 
-````{r, message = FALSE, eval = FALSE}
+````{r, message = FALSE, eval = TRUE}
 library(categoryEncodings)
-# currently 
-data_fm <- cbind( data.frame(matrix(rnorm(5*100),ncol = 5)),
-                  sample(sample(letters, 10), 100, replace = TRUE))
-colnames(data_fm)[6] <- "few_letters"
 
-# encoding is done automatically, as is the inference of factors
-    result <- encode_categories(X = data_fm)
-# note that due to the data.table backend, the result has to be saved to an object to be 
-# visible: otherwise printing is surpressed.     
-    print(result)
-    
+# create some example data
 data_fm <- cbind( data.frame( 
    matrix( rnorm(5*100),ncol = 5)),
            sample(sample(letters, 10), 100, replace = TRUE),
@@ -71,13 +61,42 @@ colnames(data_fm)[6:10] <- c( "few_letters",  "many_letters",
 # based on the number of distinct values in every variable - over a certain threshold 
 # a variable is deemed as essentially a factor, and treated as such for conversion 
 # you will be notified of which variables are being converted via a warning
-    
-result <- encode_categories(data_fm)
-print(result)
-
+result <- encoder(data_fm)
+# note that due to the data.table back-end, the result has to be saved to an object to be 
+# visible: otherwise printing is suppressed.   
+head(result$encoded)
  
 ````
 
+We also recover a **function closure** which we can reuse to fit new data, as long as it conforms to the same format: 
+```{r}
+
+# to fit to any dataset you can either call it directly - it is a single argument function
+data_fm_encoded <- result$fitted_encoder(data_fm)
+
+# or rename it, and stash it away for later use
+encoding_function <- result$fitted_encoder
+```
+
+You also get a **"de-encoding"** function - 
+```{r}
+deencoder <- result$fitted_deencoder
+new_data_fm <- deencoder( result$encoded ) 
+```
+
+This undoes the "encoding", effectively returning the original data. This can be quite useful for interpretability methods, where the 
+interpretation becomes easier for un-encoded data. 
+Note that this sadly does not maintain the order of the data from the original - and some attributes may be lost. Nonetheless, the recovered data is almost the same, and equivalent for all practical purposes: 
+
+```{r}
+
+original <- data.table::data.table(data_fm)
+unencoded <- new_data_fm 
+
+all.equal( data.table::setorder(original), 
+           data.table::setorder(unencoded), 
+           check.attributes = FALSE )
+```
 
 ## Contributing
 
